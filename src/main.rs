@@ -4,6 +4,7 @@ use crate::services::data_processor::DataProcessor;
 pub mod services;
 pub mod data;
 pub mod utils;
+pub mod core;
 
 #[tokio::main]
 async fn main() {
