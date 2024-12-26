@@ -88,7 +88,14 @@ pub struct Message {
 #[serde(untagged)]
 pub enum MessageText {
     Plain(String),
-    Entities(Vec<MessageEntity>),
+    Entities(Vec<TextEntity>),
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum TextEntity {
+    Text(String),
+    Entity(MessageEntity),
 }
 
 #[derive(Debug, Serialize, Deserialize)]

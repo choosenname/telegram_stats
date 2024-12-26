@@ -1,8 +1,6 @@
 use std::error::Error;
 use std::fs;
-
-use rust_tdlib::types::Chat;
-
+use crate::core::types::chat::Chat;
 use crate::data::repositories::data_repository::DataRepository;
 
 pub struct DataProcessor<D: DataRepository> {
