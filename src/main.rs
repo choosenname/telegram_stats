@@ -2,10 +2,10 @@ use sqlx::PgPool;
 use crate::data::implementation::postgres::Postgres;
 use crate::services::data_processor::DataProcessor;
 
-pub mod services;
-pub mod data;
-pub mod utils;
-pub mod core;
+mod services;
+mod data;
+mod utils;
+mod core;
 
 #[tokio::main]
 async fn main() {
