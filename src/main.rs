@@ -1,3 +1,4 @@
+use sqlx::PgPool;
 use crate::data::implementation::postgres::Postgres;
 use crate::services::data_processor::DataProcessor;
 
@@ -8,7 +9,11 @@ pub mod core;
 
 #[tokio::main]
 async fn main() {
-    let data_repository = Postgres;
+    dotenv::dotenv().unwrap();
+    
+    let data_repository = Postgres{
+        pool: PgPool::connect(env!("DATABASE_URL")).await.unwrap(),
+    };
 
     let processor = DataProcessor::new(data_repository);
 
