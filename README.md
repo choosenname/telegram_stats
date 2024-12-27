@@ -8,7 +8,7 @@ CREATE TABLE chats (
 CREATE TABLE messages (
     id BIGINT PRIMARY KEY,
     chat_id BIGINT REFERENCES chats(id),
-    type TEXT NOT NULL,
+    type TEXT NOT NULL,_id),
     action TEXT,
     date TEXT NOT NULL,
     date_unixtime TEXT NOT NULL,

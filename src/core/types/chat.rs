@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Chat {
     pub id: i64,
     pub name: String,
@@ -8,7 +8,7 @@ pub struct Chat {
     pub messages: Vec<Message>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Message {
     pub id: i64,
     pub r#type: String,
@@ -84,27 +84,27 @@ pub struct Message {
     pub giveaway_information: Option<Giveaway>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum MessageText {
     Plain(String),
     Entities(Vec<TextEntity>),
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum TextEntity {
     Text(String),
     Entity(MessageEntity),
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct MessageEntity {
     pub r#type: String,
     pub text: String,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Contact {
     pub first_name: String,
     pub last_name: Option<String>,
@@ -113,13 +113,13 @@ pub struct Contact {
     pub date_unixtime: Option<String>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Location {
     pub latitude: f64,
     pub longitude: f64,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Invoice {
     pub title: String,
     pub description: String,
@@ -128,7 +128,7 @@ pub struct Invoice {
     pub receipt_message_id: Option<i64>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Poll {
     pub question: String,
     pub closed: String,
@@ -136,14 +136,14 @@ pub struct Poll {
     pub answers: Vec<PollAnswer>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct PollAnswer {
     pub text: String,
     pub voters: i32,
     pub chosen: String,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Giveaway {
     pub quantity: i32,
     pub months: i32,

@@ -1,6 +1,5 @@
 use crate::data::implementation::postgres::Postgres;
 use crate::services::data_processor::DataProcessor;
-use sqlx::PgPool;
 
 mod core;
 mod data;
@@ -12,7 +11,9 @@ async fn main() {
     dotenv::dotenv().unwrap();
 
     let data_repository = Postgres {
-        pool: PgPool::connect(env!("DATABASE_URL")).await.unwrap(),
+        pool: sea_orm::Database::connect(std::env::var("DATABASE_URL").unwrap())
+            .await
+            .unwrap(),
     };
 
     let processor = DataProcessor::new(data_repository);
