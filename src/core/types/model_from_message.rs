@@ -10,7 +10,7 @@ impl From<(i64, Message)> for ActiveModel {
             chat_id: Set(chat_id),
             r#type: Set(message.r#type),
             action: Set(message.action),
-            date: Set(message.date),
+            date: Set(message.date.to_string()),
             date_unixtime: Set(message.date_unixtime),
             from_user: Set(message.from),
             from_id: Set(message.from_id),

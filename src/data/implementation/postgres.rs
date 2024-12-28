@@ -1,6 +1,5 @@
 use crate::core::types::chat::{Chat, Message};
-use crate::data::repositories::data_repository::DataRepository;
-use crate::utils::errors::data_error::DataError;
+use crate::data::repositories::data_repository::{DataError, DataRepository};
 use sea_orm::ActiveValue::Set;
 use sea_orm::{DatabaseConnection, EntityTrait};
 

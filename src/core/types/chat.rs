@@ -1,3 +1,4 @@
+use chrono::DateTime;
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -13,7 +14,7 @@ pub struct Message {
     pub id: i64,
     pub r#type: String,
     pub action: Option<String>,
-    pub date: String,
+    pub date: DateTime<chrono::Utc>,
     pub date_unixtime: String,
     pub from: String,
     pub from_id: String,
