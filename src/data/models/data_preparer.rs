@@ -1,38 +1,83 @@
-use chrono::TimeDelta;
 use crate::core::types::chat::{Chat, Message, MessageText, TextEntity};
+use chrono::TimeDelta;
 
-pub struct DataPreparer {
-    pub chat: Chat,
-}
 type Result<T> = core::result::Result<T, DataPreparerError>;
 
+pub struct DataPreparer;
 
 impl DataPreparer {
-    pub fn new(chat: Chat) -> Self {
-        Self { chat }
-    }
-
-    pub async fn retain_by_date(
-        &mut self,
-        start: chrono::DateTime<chrono::Utc>,
-        end: chrono::DateTime<chrono::Utc>,
-    ) {
-        self.chat
-            .messages
-            .retain(|message| message.date >= start && message.date <= end);
-        self.chat.messages.sort_by(|a, b| a.date.cmp(&b.date) );
-    }
-
-    pub async fn first_message(&self) -> Result<&Message> {
-        match self.chat.messages.iter().min_by(|x, y| x.date.cmp(&y.date)) {
+    pub fn first_message_ref<'a>(messages: &[&'a Message]) -> Result<&'a Message> {
+        match messages.iter().min_by(|x, y| x.date.cmp(&y.date)) {
             None => Err(DataPreparerError::NoData),
             Some(message) => Ok(message),
         }
     }
 
-    pub async fn occurrences(&self, search: &str) -> Vec<&Message> {
-        self.chat
-            .messages
+    pub fn last_message_ref<'a>(messages: &[&'a Message]) -> Result<&'a Message> {
+        match messages.iter().max_by(|x, y| x.date.cmp(&y.date)) {
+            None => Err(DataPreparerError::NoData),
+            Some(message) => Ok(message),
+        }
+    }
+
+    pub fn first_message(messages: &[Message]) -> Result<&Message> {
+        match messages.iter().min_by(|x, y| x.date.cmp(&y.date)) {
+            None => Err(DataPreparerError::NoData),
+            Some(message) => Ok(message),
+        }
+    }
+
+    pub fn character_count(messages: &[Message]) -> Result<usize> {
+        let mut total_characters = 0;
+
+        for message in messages {
+            match &message.text {
+                MessageText::Plain(text) => {
+                    total_characters += text.len();
+                }
+                MessageText::Entities(entities) => {
+                    for entity in entities {
+                        match entity {
+                            TextEntity::Text(text) => {
+                                total_characters += text.len();
+                            }
+                            TextEntity::Entity(entity) => {
+                                total_characters += entity.text.len();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        Ok(total_characters)
+    }
+
+    pub fn calls_durations(messages: &[&Message]) -> Result<u32> {
+        let mut duration = 0;
+
+        for message in messages {
+            if let Some(dur) = message.duration_seconds {
+                duration += dur
+            }
+        }
+        Ok(duration as u32)
+    }
+}
+
+impl Chat {
+    pub async fn retain_by_date(
+        &mut self,
+        start: chrono::DateTime<chrono::Utc>,
+        end: chrono::DateTime<chrono::Utc>,
+    ) {
+        self.messages
+            .retain(|message| message.date >= start && message.date <= end);
+        self.messages.sort_by(|a, b| a.date.cmp(&b.date));
+    }
+
+    pub fn occurrences(&self, search: &str) -> Vec<&Message> {
+        self.messages
             .iter()
             .filter(|message| match &message.text {
                 MessageText::Plain(text) => text.contains(search),
@@ -44,11 +89,10 @@ impl DataPreparer {
             .collect()
     }
 
-    pub async fn calls(&self) -> Vec<&Message> {
+    pub fn calls(&self) -> Vec<&Message> {
         const CALL_ACTION: &str = "phone_call";
 
-        self.chat
-            .messages
+        self.messages
             .iter()
             .filter(|message| match &message.action {
                 None => false,
@@ -57,10 +101,10 @@ impl DataPreparer {
             .collect()
     }
 
-    pub async fn longest_conversation(&self) -> Vec<&Message> {
+    pub fn longest_conversation(&self) -> Vec<&Message> {
         let mut longest_conversation = vec![];
         let mut conversation = vec![];
-        for message in self.chat.messages.iter() {
+        for message in self.messages.iter() {
             if conversation.is_empty() {
                 conversation.push(message);
             } else {
@@ -83,4 +127,6 @@ impl DataPreparer {
 pub enum DataPreparerError {
     #[error("No data to prepare")]
     NoData,
+    #[error("Invalid calls durations in message: {id}")]
+    InvalidCallsArray { id: i64 },
 }

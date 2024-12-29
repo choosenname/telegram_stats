@@ -1,6 +1,6 @@
+use crate::utils::deserialize_datetime::deserialize_datetime;
 use chrono::DateTime;
 use serde::{Deserialize, Serialize};
-use crate::utils::deserialize_datetime::deserialize_datetime;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Chat {
@@ -16,7 +16,7 @@ pub struct Message {
     pub r#type: String,
     pub action: Option<String>,
     #[serde(deserialize_with = "deserialize_datetime")]
-    pub date: DateTime<chrono::FixedOffset>,
+    pub date: DateTime<chrono::Utc>,
     pub date_unixtime: String,
     pub from: Option<String>,
     pub from_id: Option<String>,

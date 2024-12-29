@@ -21,5 +21,6 @@ pub struct DatabaseConfig {
 
 #[derive(Deserialize)]
 pub struct AppConfig {
-    pub path: String,
+    pub input_path: String,
+    pub output_path: String,
 }
