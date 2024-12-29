@@ -1,5 +1,5 @@
 use crate::core::types::chat::{Chat, Message};
-use crate::data::repositories::data_repository::{DataError, DataRepository};
+use crate::data::repositories::storage_repository::{StorageError, StorageRepository};
 use sea_orm::ActiveValue::Set;
 use sea_orm::{DatabaseConnection, EntityTrait};
 
@@ -7,10 +7,10 @@ pub struct Postgres {
     pub pool: DatabaseConnection,
 }
 
-impl DataRepository for Postgres {
+impl StorageRepository for Postgres {
     type Data = Chat;
 
-    async fn save(&self, data: Self::Data) -> Result<(), DataError> {
+    async fn save(&self, data: Self::Data) -> Result<(), StorageError> {
         use crate::core::entities::chats::ActiveModel as ChatModel;
         use crate::core::entities::chats::Entity as Chats;
 
@@ -29,7 +29,7 @@ impl DataRepository for Postgres {
             )
             .exec(&self.pool)
             .await
-            .map_err(|_| DataError::Save)?;
+            .map_err(|_| StorageError::Save)?;
 
         // Сохранение сообщений
         self.save_messages(data.id, &data.messages).await?;
@@ -39,7 +39,7 @@ impl DataRepository for Postgres {
 }
 
 impl Postgres {
-    pub async fn save_messages(&self, chat_id: i64, messages: &[Message]) -> Result<(), DataError> {
+    pub async fn save_messages(&self, chat_id: i64, messages: &[Message]) -> Result<(), StorageError> {
         use crate::core::entities::messages::ActiveModel as MessageModel;
         use crate::core::entities::messages::Entity as Messages;
 
@@ -56,7 +56,7 @@ impl Postgres {
                 )
                 .exec(&self.pool)
                 .await
-                .map_err(|_| DataError::Save)?;
+                .map_err(|_| StorageError::Save)?;
         }
 
         Ok(())

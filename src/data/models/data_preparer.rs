@@ -1,38 +1,28 @@
-use chrono::TimeDelta;
 use crate::core::types::chat::{Chat, Message, MessageText, TextEntity};
+use chrono::TimeDelta;
 
-pub struct DataPreparer {
-    pub chat: Chat,
-}
 type Result<T> = core::result::Result<T, DataPreparerError>;
 
-
-impl DataPreparer {
-    pub fn new(chat: Chat) -> Self {
-        Self { chat }
-    }
-
+impl Chat {
     pub async fn retain_by_date(
         &mut self,
         start: chrono::DateTime<chrono::Utc>,
         end: chrono::DateTime<chrono::Utc>,
     ) {
-        self.chat
-            .messages
+        self.messages
             .retain(|message| message.date >= start && message.date <= end);
-        self.chat.messages.sort_by(|a, b| a.date.cmp(&b.date) );
+        self.messages.sort_by(|a, b| a.date.cmp(&b.date));
     }
 
     pub async fn first_message(&self) -> Result<&Message> {
-        match self.chat.messages.iter().min_by(|x, y| x.date.cmp(&y.date)) {
+        match self.messages.iter().min_by(|x, y| x.date.cmp(&y.date)) {
             None => Err(DataPreparerError::NoData),
             Some(message) => Ok(message),
         }
     }
 
     pub async fn occurrences(&self, search: &str) -> Vec<&Message> {
-        self.chat
-            .messages
+        self.messages
             .iter()
             .filter(|message| match &message.text {
                 MessageText::Plain(text) => text.contains(search),
@@ -47,8 +37,7 @@ impl DataPreparer {
     pub async fn calls(&self) -> Vec<&Message> {
         const CALL_ACTION: &str = "phone_call";
 
-        self.chat
-            .messages
+        self.messages
             .iter()
             .filter(|message| match &message.action {
                 None => false,
@@ -60,7 +49,7 @@ impl DataPreparer {
     pub async fn longest_conversation(&self) -> Vec<&Message> {
         let mut longest_conversation = vec![];
         let mut conversation = vec![];
-        for message in self.chat.messages.iter() {
+        for message in self.messages.iter() {
             if conversation.is_empty() {
                 conversation.push(message);
             } else {
