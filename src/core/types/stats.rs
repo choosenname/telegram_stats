@@ -1,11 +1,11 @@
-use chrono::DateTime;
-use serde::Serialize;
 use crate::core::types::chat::{Message, MessageText};
+use chrono::{DateTime, Utc};
+use serde::Serialize;
 
 #[derive(Serialize)]
 pub struct AllStats {
     pub chat_stats: ChatStats,
-    pub occurrences: MessagesStats,
+    pub occurrences: OccurrencesStats,
     pub longest_conversation: ConversationStats,
     pub calls_stats: CallsStats,
 }
@@ -32,8 +32,17 @@ pub struct AdditionalMessagesStats {
 }
 
 #[derive(Serialize)]
+pub struct OccurrencesStats {
+    pub first_message: MinimalMessage,
+    pub total_messages_count: usize,
+    pub owner_messages_count: usize,
+    pub member_messages_count: usize,
+}
+
+#[derive(Serialize)]
 pub struct ConversationStats {
     pub first_message: MinimalMessage,
+    pub last_message: MinimalMessage,
     pub messages_stats: MessagesStats,
 }
 
@@ -49,7 +58,7 @@ pub struct MinimalMessage {
     pub from: Option<String>,
     pub r#type: String,
     pub text: MessageText,
-    pub date: DateTime<chrono::FixedOffset>,
+    pub date: DateTime<Utc>,
 }
 
 impl From<Message> for MinimalMessage {

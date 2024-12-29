@@ -6,18 +6,62 @@ type Result<T> = core::result::Result<T, DataPreparerError>;
 pub struct DataPreparer;
 
 impl DataPreparer {
-    pub async fn first_message_ref<'a>(messages: &[&'a Message]) -> Result<&'a Message> {
+    pub fn first_message_ref<'a>(messages: &[&'a Message]) -> Result<&'a Message> {
         match messages.iter().min_by(|x, y| x.date.cmp(&y.date)) {
             None => Err(DataPreparerError::NoData),
             Some(message) => Ok(message),
         }
     }
 
-    pub async fn first_message(messages: &[Message]) -> Result<&Message> {
+    pub fn last_message_ref<'a>(messages: &[&'a Message]) -> Result<&'a Message> {
+        match messages.iter().max_by(|x, y| x.date.cmp(&y.date)) {
+            None => Err(DataPreparerError::NoData),
+            Some(message) => Ok(message),
+        }
+    }
+
+    pub fn first_message(messages: &[Message]) -> Result<&Message> {
         match messages.iter().min_by(|x, y| x.date.cmp(&y.date)) {
             None => Err(DataPreparerError::NoData),
             Some(message) => Ok(message),
         }
+    }
+
+    pub fn character_count(messages: &[Message]) -> Result<usize> {
+        let mut total_characters = 0;
+
+        for message in messages {
+            match &message.text {
+                MessageText::Plain(text) => {
+                    total_characters += text.len();
+                }
+                MessageText::Entities(entities) => {
+                    for entity in entities {
+                        match entity {
+                            TextEntity::Text(text) => {
+                                total_characters += text.len();
+                            }
+                            TextEntity::Entity(entity) => {
+                                total_characters += entity.text.len();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        Ok(total_characters)
+    }
+
+    pub fn calls_durations(messages: &[&Message]) -> Result<u32> {
+        let mut duration = 0;
+
+        for message in messages {
+            if let Some(dur) = message.duration_seconds {
+                duration += dur
+            }
+        }
+        Ok(duration as u32)
     }
 }
 
@@ -32,9 +76,7 @@ impl Chat {
         self.messages.sort_by(|a, b| a.date.cmp(&b.date));
     }
 
-    
-
-    pub async fn occurrences(&self, search: &str) -> Vec<&Message> {
+    pub fn occurrences(&self, search: &str) -> Vec<&Message> {
         self.messages
             .iter()
             .filter(|message| match &message.text {
@@ -47,7 +89,7 @@ impl Chat {
             .collect()
     }
 
-    pub async fn calls(&self) -> Vec<&Message> {
+    pub fn calls(&self) -> Vec<&Message> {
         const CALL_ACTION: &str = "phone_call";
 
         self.messages
@@ -59,7 +101,7 @@ impl Chat {
             .collect()
     }
 
-    pub async fn longest_conversation(&self) -> Vec<&Message> {
+    pub fn longest_conversation(&self) -> Vec<&Message> {
         let mut longest_conversation = vec![];
         let mut conversation = vec![];
         for message in self.messages.iter() {
@@ -85,4 +127,6 @@ impl Chat {
 pub enum DataPreparerError {
     #[error("No data to prepare")]
     NoData,
+    #[error("Invalid calls durations in message: {id}")]
+    InvalidCallsArray { id: i64 },
 }

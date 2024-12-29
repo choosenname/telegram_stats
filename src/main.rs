@@ -1,11 +1,10 @@
 use crate::config::Config;
 use crate::core::types::chat::Chat;
+use crate::core::types::stats::AllStats;
 use crate::data::implementation::json::Json;
 use crate::data::models::data_getter::DataGetter;
 use crate::services::data_processor::DataProcessor;
-use crate::utils::save_to_json::save_to_json;
 use chrono::{TimeZone, Utc};
-use crate::core::types::stats::{ChatStats, MessagesStats};
 
 mod config;
 mod core;
@@ -32,14 +31,8 @@ async fn main() {
     )
     .await;
 
-    // data_processor.gen_stats_and_save::<ChatStats>(&data).await.unwrap();
-
-    /*data_processor
-        .gen_stats_and_save::<MessagesStats>(data.occurrences("люблю").await)
+    data_processor
+        .gen_stats_and_save::<AllStats>(data)
         .await
-        .unwrap();*/
-
-    /*save_to_json("./tmp/calls.json", &data.calls().await).await;
-
-    save_to_json("./tmp/conversion.json", &data.longest_conversation().await).await;*/
+        .unwrap();
 }
