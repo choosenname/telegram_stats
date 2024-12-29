@@ -1,5 +1,6 @@
-use chrono::DateTime;
+use chrono::{DateTime, TimeZone};
 use serde::{Deserialize, Serialize};
+use crate::utils::deserialize_datetime::deserialize_datetime;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Chat {
@@ -14,10 +15,11 @@ pub struct Message {
     pub id: i64,
     pub r#type: String,
     pub action: Option<String>,
-    pub date: DateTime<chrono::Utc>,
+    #[serde(deserialize_with = "deserialize_datetime")]
+    pub date: DateTime<chrono::FixedOffset>,
     pub date_unixtime: String,
-    pub from: String,
-    pub from_id: String,
+    pub from: Option<String>,
+    pub from_id: Option<String>,
     pub edited: Option<String>,
     pub edited_unixtime: Option<String>,
     pub reply_to_message_id: Option<i64>,
@@ -27,8 +29,8 @@ pub struct Message {
     pub actor: Option<String>,
     pub actor_id: Option<String>,
     pub photo: Option<String>,
-    pub width: Option<String>,
-    pub height: Option<String>,
+    pub width: Option<i32>,
+    pub height: Option<i32>,
     pub file: Option<String>,
     pub thumbnail: Option<String>,
     pub self_destruct_period_seconds: Option<i32>,

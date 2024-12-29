@@ -3,6 +3,8 @@ use crate::core::types::chat::{Chat, Message, MessageText, TextEntity};
 pub struct DataPreparer {
     pub chat: Chat,
 }
+type Result<T> = core::result::Result<T, DataPreparerError>;
+
 
 impl DataPreparer {
     pub fn new(chat: Chat) -> Self {
@@ -23,7 +25,7 @@ impl DataPreparer {
         self.chat.messages.len()
     }
 
-    pub async fn first_message(&self) -> Result<&Message, DataPreparerError> {
+    pub async fn first_message(&self) -> Result<&Message> {
         match self.chat.messages.iter().min_by(|x, y| x.date.cmp(&y.date)) {
             None => Err(DataPreparerError::NoData),
             Some(message) => Ok(message),

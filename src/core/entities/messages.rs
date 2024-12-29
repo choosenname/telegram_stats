@@ -16,10 +16,10 @@ pub struct Model {
     pub date: String,
     #[sea_orm(column_type = "Text")]
     pub date_unixtime: String,
-    #[sea_orm(column_type = "Text")]
-    pub from_user: String,
-    #[sea_orm(column_type = "Text")]
-    pub from_id: String,
+    #[sea_orm(column_type = "Text", nullable)]
+    pub from_user: Option<String>,
+    #[sea_orm(column_type = "Text", nullable)]
+    pub from_id: Option<String>,
     #[sea_orm(column_type = "Text", nullable)]
     pub edited: Option<String>,
     #[sea_orm(column_type = "Text", nullable)]
@@ -37,10 +37,8 @@ pub struct Model {
     pub actor_id: Option<String>,
     #[sea_orm(column_type = "Text", nullable)]
     pub photo: Option<String>,
-    #[sea_orm(column_type = "Text", nullable)]
-    pub width: Option<String>,
-    #[sea_orm(column_type = "Text", nullable)]
-    pub height: Option<String>,
+    pub width: Option<i32>,
+    pub height: Option<i32>,
     #[sea_orm(column_type = "Text", nullable)]
     pub file: Option<String>,
     #[sea_orm(column_type = "Text", nullable)]

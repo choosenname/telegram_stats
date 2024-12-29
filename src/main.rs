@@ -1,10 +1,9 @@
+use std::fs::File;
 use crate::config::Config;
 use crate::core::types::chat::Chat;
 use crate::data::models::data_getter::DataGetter;
 use crate::data::models::data_preparer::DataPreparer;
-use crate::data::repositories::data_repository::DataRepository;
 use chrono::{TimeZone, Utc};
-use serde::de::DeserializeOwned;
 
 mod config;
 mod core;
@@ -37,9 +36,20 @@ async fn main() {
         )
         .await;
 
-    print!("Message count {}", data_preparer.messages_count().await);
-    print!(
-        "First message {:?}",
-        data_preparer.first_message().await.unwrap()
-    );
+    println!("Message count {}", data_preparer.messages_count().await);
+    
+    // println!("First message {:?}", data_preparer.first_message().await.unwrap());
+    save_to_json("./tmp/occurrences.json", &data_preparer.first_message().await.unwrap()).await;
+    
+    // println!("Occurrences {:?}", data_preparer.occurrences("я люблю тебя").await);
+    save_to_json("./tmp/occurrences1.json", &data_preparer.occurrences("люблю тебя").await).await;
+    save_to_json("./tmp/occurrences2.json", &data_preparer.occurrences("тебя люблю").await).await;
+    
+    // println!("Calls {:?}", data_preparer.calls().await);
+    save_to_json("./tmp/calls.json", &data_preparer.calls().await).await;
+}
+
+async fn save_to_json(filename: &str, data: &impl serde::Serialize) {
+    let file = File::create(filename).expect("Failed to create file");
+    serde_json::to_writer(file, &data).expect("Failed to write JSON data");
 }
