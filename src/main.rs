@@ -1,10 +1,9 @@
-use std::fs::File;
 use crate::config::Config;
 use crate::core::types::chat::Chat;
 use crate::data::models::data_getter::DataGetter;
 use crate::data::models::data_preparer::DataPreparer;
-use chrono::{TimeZone, Utc};
 use crate::utils::save_to_json::save_to_json;
+use chrono::{TimeZone, Utc};
 
 mod config;
 mod core;

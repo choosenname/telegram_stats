@@ -1,4 +1,4 @@
-use chrono::{DateTime, TimeZone};
+use chrono::DateTime;
 use serde::{Deserialize, Serialize};
 use crate::utils::deserialize_datetime::deserialize_datetime;
 
