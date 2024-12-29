@@ -1,8 +1,8 @@
 use crate::data::models::data_preparer::DataPreparerError;
 
-pub trait StatisticRepository<'a>: Sized {
+pub trait StatisticRepository: Sized {
     type Data<'b>;
-    async fn get_stats(data: Self::Data<'a>) -> Result<Self>;
+    async fn get_stats(data: Self::Data<'_>) -> Result<Self>;
 }
 
 pub type Result<T> = core::result::Result<T, StatisticError>;

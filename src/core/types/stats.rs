@@ -3,6 +3,14 @@ use serde::Serialize;
 use crate::core::types::chat::{Message, MessageText};
 
 #[derive(Serialize)]
+pub struct AllStats {
+    pub chat_stats: ChatStats,
+    pub occurrences: MessagesStats,
+    pub longest_conversation: ConversationStats,
+    pub calls_stats: CallsStats,
+}
+
+#[derive(Serialize)]
 pub struct ChatStats {
     pub first_message: MinimalMessage,
     pub messages_stats: MessagesStats,
@@ -21,6 +29,12 @@ pub struct AdditionalMessagesStats {
     pub total_characters_count: usize,
     pub owner_characters_count: usize,
     pub member_characters_count: usize,
+}
+
+#[derive(Serialize)]
+pub struct ConversationStats {
+    pub first_message: MinimalMessage,
+    pub messages_stats: MessagesStats,
 }
 
 #[derive(Serialize)]

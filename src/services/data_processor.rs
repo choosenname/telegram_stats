@@ -1,30 +1,26 @@
 use crate::data::repositories::data_repository::DataRepository;
 use crate::data::repositories::statistic_repository::StatisticRepository;
 use serde::Serialize;
-use std::marker::{PhantomData};
 
-pub struct DataProcessor<'a, D, T>
+pub struct DataProcessor<D>
 where
-    D: DataRepository<T>,
-    T: StatisticRepository<'a> + Serialize,
+    D: DataRepository,
 {
     pub data_repository: D,
-    _phantom: PhantomData<&'a T>,
 }
 
-impl<'a, D, T> DataProcessor<'a, D, T>
+impl<D> DataProcessor<D>
 where
-    D: DataRepository<T>,
-    T: StatisticRepository<'a> + Serialize,
+    D: DataRepository,
 {
     pub fn new(data_repository: D) -> Self {
-        Self {
-            data_repository,
-            _phantom: PhantomData,
-        }
+        Self { data_repository }
     }
 
-    pub async fn gen_stats_and_save(&self, data: T::Data<'a>) -> anyhow::Result<()> {
+    pub async fn gen_stats_and_save<'a, T>(&self, data: T::Data<'a>) -> anyhow::Result<()>
+    where
+        T: StatisticRepository + Serialize,
+    {
         let total_stats = T::get_stats(data).await?;
         self.data_repository.save(&total_stats).await?;
         Ok(())

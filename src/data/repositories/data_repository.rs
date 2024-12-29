@@ -1,7 +1,7 @@
 use serde::Serialize;
 
-pub trait DataRepository<T: Serialize> {
-    async fn save(&self, data: &T) -> Result<()>;
+pub trait DataRepository {
+    async fn save<T: Serialize>(&self, data: &T) -> Result<()>;
 }
 
 pub type Result<T> = std::result::Result<T, DataError>;

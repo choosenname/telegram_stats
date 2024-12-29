@@ -12,8 +12,8 @@ impl Json {
     }
 }
 
-impl<T: Serialize> DataRepository<T> for Json {
-    async fn save(&self, data: &T) -> Result<()> {
+impl DataRepository for Json {
+    async fn save<T: Serialize>(&self, data: &T) -> Result<()> {
         save_to_json(&self.path, data).await;
         Ok(())
     }

@@ -3,6 +3,24 @@ use chrono::TimeDelta;
 
 type Result<T> = core::result::Result<T, DataPreparerError>;
 
+pub struct DataPreparer;
+
+impl DataPreparer {
+    pub async fn first_message_ref<'a>(messages: &[&'a Message]) -> Result<&'a Message> {
+        match messages.iter().min_by(|x, y| x.date.cmp(&y.date)) {
+            None => Err(DataPreparerError::NoData),
+            Some(message) => Ok(message),
+        }
+    }
+
+    pub async fn first_message(messages: &[Message]) -> Result<&Message> {
+        match messages.iter().min_by(|x, y| x.date.cmp(&y.date)) {
+            None => Err(DataPreparerError::NoData),
+            Some(message) => Ok(message),
+        }
+    }
+}
+
 impl Chat {
     pub async fn retain_by_date(
         &mut self,
@@ -14,12 +32,7 @@ impl Chat {
         self.messages.sort_by(|a, b| a.date.cmp(&b.date));
     }
 
-    pub async fn first_message(&self) -> Result<&Message> {
-        match self.messages.iter().min_by(|x, y| x.date.cmp(&y.date)) {
-            None => Err(DataPreparerError::NoData),
-            Some(message) => Ok(message),
-        }
-    }
+    
 
     pub async fn occurrences(&self, search: &str) -> Vec<&Message> {
         self.messages

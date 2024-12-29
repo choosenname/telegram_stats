@@ -44,7 +44,7 @@ impl Postgres {
         use crate::core::entities::messages::Entity as Messages;
 
         for message in messages {
-            let message_model = MessageModel::from((chat_id, message.clone()));
+            let message_model =     MessageModel::from((chat_id, message.clone()));
 
             Messages::insert(message_model)
                 .on_conflict(
