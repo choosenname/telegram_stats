@@ -1,3 +1,4 @@
+use chrono::TimeDelta;
 use crate::core::types::chat::{Chat, Message, MessageText, TextEntity};
 
 pub struct DataPreparer {
@@ -19,10 +20,7 @@ impl DataPreparer {
         self.chat
             .messages
             .retain(|message| message.date >= start && message.date <= end);
-    }
-
-    pub async fn messages_count(&self) -> usize {
-        self.chat.messages.len()
+        self.chat.messages.sort_by(|a, b| a.date.cmp(&b.date) );
     }
 
     pub async fn first_message(&self) -> Result<&Message> {
@@ -57,6 +55,27 @@ impl DataPreparer {
                 Some(action) => action == CALL_ACTION,
             })
             .collect()
+    }
+
+    pub async fn longest_conversation(&self) -> Vec<&Message> {
+        let mut longest_conversation = vec![];
+        let mut conversation = vec![];
+        for message in self.chat.messages.iter() {
+            if conversation.is_empty() {
+                conversation.push(message);
+            } else {
+                let time = message.date - conversation.last().unwrap().date;
+                if time < TimeDelta::minutes(15) {
+                    conversation.push(message);
+                } else if conversation.len() > longest_conversation.len() {
+                    longest_conversation = conversation.clone();
+                } else {
+                    conversation.clear();
+                    conversation.push(message);
+                }
+            }
+        }
+        longest_conversation
     }
 }
 

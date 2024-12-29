@@ -4,6 +4,7 @@ use crate::core::types::chat::Chat;
 use crate::data::models::data_getter::DataGetter;
 use crate::data::models::data_preparer::DataPreparer;
 use chrono::{TimeZone, Utc};
+use crate::utils::save_to_json::save_to_json;
 
 mod config;
 mod core;
@@ -35,8 +36,6 @@ async fn main() {
             Utc.with_ymd_and_hms(2024, 12, 31, 23, 59, 0).unwrap(),
         )
         .await;
-
-    println!("Message count {}", data_preparer.messages_count().await);
     
     // println!("First message {:?}", data_preparer.first_message().await.unwrap());
     save_to_json("./tmp/occurrences.json", &data_preparer.first_message().await.unwrap()).await;
@@ -47,9 +46,6 @@ async fn main() {
     
     // println!("Calls {:?}", data_preparer.calls().await);
     save_to_json("./tmp/calls.json", &data_preparer.calls().await).await;
-}
-
-async fn save_to_json(filename: &str, data: &impl serde::Serialize) {
-    let file = File::create(filename).expect("Failed to create file");
-    serde_json::to_writer(file, &data).expect("Failed to write JSON data");
+    
+    save_to_json("./tmp/converstion.json", &data_preparer.longest_conversation().await).await;
 }
