@@ -121,7 +121,7 @@ impl StatisticRepository for AllStats {
         Ok(Self {
             chat_stats: ChatStats::get_stats(&data).await?,
             occurrences: MessagesStats::get_stats(data.occurrences(
-                &Regex::new(r"(?i)\bлюблю\b.*\bтебя\b|\bтебя\b.*\bлюблю\b").unwrap(),
+                &Regex::new(r"(?i)\bлюблю\b.*\bтебя\b|\bтебя\b.*\bлюблю\b|\bи я тебя\b").unwrap(),
             ))
             .await?,
             longest_conversation: MessagesStats::get_stats(data.longest_conversation()).await?,

@@ -50,6 +50,7 @@ pub struct MostUsedSticker {
 
 #[derive(Serialize)]
 pub struct MinimalMessage {
+    pub id: i64,
     pub from: Option<String>,
     pub r#type: String,
     pub text: MessageText,
@@ -63,6 +64,7 @@ pub struct MinimalMessage {
 impl From<Message> for MinimalMessage {
     fn from(value: Message) -> Self {
         Self {
+            id: value.id,
             from: value.from,
             r#type: value.r#type,
             text: value.text,
