@@ -8,6 +8,7 @@ pub struct AllStats {
     pub occurrences: MessagesStats,
     pub longest_conversation: MessagesStats,
     pub calls_stats: CallsStats,
+    pub most_used_sticker: MostUsedSticker,
 }
 
 #[derive(Serialize)]
@@ -40,6 +41,14 @@ pub struct CallsStats {
 }
 
 #[derive(Serialize)]
+pub struct MostUsedSticker {
+    pub owner_most_used_sticker_count: i32,
+    pub owner_most_used_sticker: Option<MinimalMessage>,
+    pub member_most_used_sticker_count: i32,
+    pub member_most_used_sticker: Option<MinimalMessage>,
+}
+
+#[derive(Serialize)]
 pub struct MinimalMessage {
     pub from: Option<String>,
     pub r#type: String,
@@ -47,6 +56,8 @@ pub struct MinimalMessage {
     pub date: DateTime<Utc>,
     pub duration_seconds: Option<i32>,
     pub discard_reason: Option<String>,
+    pub file: Option<String>,
+    pub media_type: Option<String>,
 }
 
 impl From<Message> for MinimalMessage {
@@ -58,6 +69,8 @@ impl From<Message> for MinimalMessage {
             date: value.date,
             duration_seconds: value.duration_seconds,
             discard_reason: value.discard_reason,
+            file: value.file,
+            media_type: value.media_type,
         }
     }
 }

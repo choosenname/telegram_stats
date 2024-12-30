@@ -82,7 +82,7 @@ impl DataPreparer {
     where
         I: Iterator<Item = &'a Message>,
     {
-        let mut max_duration_message = messages.next();
+        let mut max_duration_message = None;
         let mut max_duration = 0;
 
         for message in messages {
@@ -94,6 +94,31 @@ impl DataPreparer {
             }
         }
         max_duration_message.map(|m| m.clone().into())
+    }
+
+    pub fn most_used_sticker<'a, I, F>(messages: I, mut filter: F) -> (i32, Option<MinimalMessage>)
+    where
+        I: Iterator<Item = &'a Message>,
+        F: FnMut(&Message) -> bool,
+    {
+        let mut max_message = None;
+        let mut max_used = 0;
+        let mut usage_counter = std::collections::HashMap::new();
+
+        for message in messages {
+            if message.media_type == Some("sticker".to_string()) && filter(message) {
+                if let Some(path) = &message.file {
+                    let count = usage_counter.entry(path.clone()).or_insert(0);
+                    *count += 1;
+                    if *count > max_used {
+                        max_used = *count;
+                        max_message = Some(message.clone().into());
+                    }
+                }
+            }
+        }
+
+        (max_used, max_message)
     }
 }
 

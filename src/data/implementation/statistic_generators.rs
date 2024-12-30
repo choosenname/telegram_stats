@@ -1,6 +1,6 @@
 use crate::core::types::chat::{Chat, Message};
 use crate::core::types::stats::{
-    AdditionalMessagesStats, AllStats, CallsStats, ChatStats, MessagesStats,
+    AdditionalMessagesStats, AllStats, CallsStats, ChatStats, MessagesStats, MostUsedSticker,
 };
 use crate::data::models::data_preparer::DataPreparer;
 use crate::data::repositories::statistic_repository::{
@@ -74,7 +74,7 @@ impl StatisticRepository for AdditionalMessagesStats {
 }
 
 impl StatisticRepository for CallsStats {
-    type Data<'b> = Vec<&'b Message>;
+    type Data<'a> = Vec<&'a Message>;
 
     async fn get_stats(data: Self::Data<'_>) -> Result<Self> {
         let duration = DataPreparer::calls_durations(data.iter().copied())
@@ -88,6 +88,31 @@ impl StatisticRepository for CallsStats {
     }
 }
 
+impl StatisticRepository for MostUsedSticker {
+    type Data<'b> = &'b Vec<Message>;
+
+    async fn get_stats(data: Self::Data<'_>) -> Result<Self> {
+        let owner =
+            DataPreparer::most_used_sticker(data.iter(), |message| match &message.from_id {
+                None => false,
+                Some(id) => id == "user5769929151",
+            });
+
+        let member =
+            DataPreparer::most_used_sticker(data.iter(), |message| match &message.from_id {
+                None => false,
+                Some(id) => id == "user1150140845",
+            });
+
+        Ok(Self {
+            owner_most_used_sticker_count: owner.0,
+            owner_most_used_sticker: owner.1,
+            member_most_used_sticker_count: member.0,
+            member_most_used_sticker: member.1,
+        })
+    }
+}
+
 impl StatisticRepository for AllStats {
     type Data<'b> = Chat;
 
@@ -97,6 +122,7 @@ impl StatisticRepository for AllStats {
             occurrences: MessagesStats::get_stats(data.occurrences("люблю")).await?,
             longest_conversation: MessagesStats::get_stats(data.longest_conversation()).await?,
             calls_stats: CallsStats::get_stats(data.calls()).await?,
+            most_used_sticker: MostUsedSticker::get_stats(&data.messages).await?,
         })
     }
 }
