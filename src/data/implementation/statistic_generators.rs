@@ -6,6 +6,7 @@ use crate::data::models::data_preparer::DataPreparer;
 use crate::data::repositories::statistic_repository::{
     Result, StatisticError, StatisticRepository,
 };
+use regex::Regex;
 
 impl StatisticRepository for ChatStats {
     type Data<'b> = &'b Chat;
@@ -119,7 +120,10 @@ impl StatisticRepository for AllStats {
     async fn get_stats(data: Self::Data<'_>) -> Result<Self> {
         Ok(Self {
             chat_stats: ChatStats::get_stats(&data).await?,
-            occurrences: MessagesStats::get_stats(data.occurrences("люблю")).await?,
+            occurrences: MessagesStats::get_stats(data.occurrences(
+                &Regex::new(r"(?i)\bлюблю\b.*\bтебя\b|\bтебя\b.*\bлюблю\b").unwrap(),
+            ))
+            .await?,
             longest_conversation: MessagesStats::get_stats(data.longest_conversation()).await?,
             calls_stats: CallsStats::get_stats(data.calls()).await?,
             most_used_sticker: MostUsedSticker::get_stats(&data.messages).await?,

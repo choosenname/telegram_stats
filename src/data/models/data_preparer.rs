@@ -1,6 +1,7 @@
 use crate::core::types::chat::{Chat, Message, MessageText, TextEntity};
 use crate::core::types::stats::MinimalMessage;
 use chrono::TimeDelta;
+use regex::Regex;
 
 type Result<T> = core::result::Result<T, DataPreparerError>;
 
@@ -133,14 +134,14 @@ impl Chat {
         self.messages.sort_by(|a, b| a.date.cmp(&b.date));
     }
 
-    pub fn occurrences(&self, search: &str) -> Vec<&Message> {
+    pub fn occurrences(&self, search: &Regex) -> Vec<&Message> {
         self.messages
             .iter()
             .filter(|message| match &message.text {
-                MessageText::Plain(text) => text.contains(search),
+                MessageText::Plain(text) => search.is_match(text),
                 MessageText::Entities(vec) => vec.iter().any(|item| match item {
-                    TextEntity::Text(text) => text.contains(search),
-                    TextEntity::Entity(entity) => entity.text.contains(search),
+                    TextEntity::Text(text) => search.is_match(text),
+                    TextEntity::Entity(entity) => search.is_match(&entity.text),
                 }),
             })
             .collect()
