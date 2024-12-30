@@ -50,7 +50,7 @@ pub struct ConversationStats {
 pub struct CallsStats {
     pub total_calls_durations_sec: u32,
     pub total_calls_durations_min: u32,
-    pub longest_call_durations_min: u32,
+    pub longest_call_durations_min: Option<MinimalMessage>,
 }
 
 #[derive(Serialize)]
@@ -59,6 +59,8 @@ pub struct MinimalMessage {
     pub r#type: String,
     pub text: MessageText,
     pub date: DateTime<Utc>,
+    pub duration_seconds: Option<i32>,
+    pub discard_reason: Option<String>,
 }
 
 impl From<Message> for MinimalMessage {
@@ -68,6 +70,8 @@ impl From<Message> for MinimalMessage {
             r#type: value.r#type,
             text: value.text,
             date: value.date,
+            duration_seconds: value.duration_seconds,
+            discard_reason: value.discard_reason
         }
     }
 }

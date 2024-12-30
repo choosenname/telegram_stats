@@ -1,4 +1,5 @@
 use crate::core::types::chat::{Chat, Message, MessageText, TextEntity};
+use crate::core::types::stats::MinimalMessage;
 use chrono::TimeDelta;
 
 type Result<T> = core::result::Result<T, DataPreparerError>;
@@ -27,7 +28,10 @@ impl DataPreparer {
         }
     }
 
-    pub fn character_count(messages: &[Message]) -> Result<usize> {
+    pub fn character_count<'a, I>(messages: I) -> Result<usize>
+    where
+        I: Iterator<Item = &'a Message>,
+    {
         let mut total_characters = 0;
 
         for message in messages {
@@ -53,7 +57,18 @@ impl DataPreparer {
         Ok(total_characters)
     }
 
-    pub fn calls_durations(messages: &[&Message]) -> Result<u32> {
+    pub fn character_count_filtered<'a, I, F>(messages: I, mut filter: F) -> Result<usize>
+    where
+        I: Iterator<Item = &'a Message>,
+        F: FnMut(&Message) -> bool,
+    {
+        Self::character_count(messages.filter(|message| filter(message)))
+    }
+
+    pub fn calls_durations<'a, I>(messages: I) -> Result<u32>
+    where
+        I: Iterator<Item = &'a Message>,
+    {
         let mut duration = 0;
 
         for message in messages {
@@ -62,6 +77,24 @@ impl DataPreparer {
             }
         }
         Ok(duration as u32)
+    }
+
+    pub fn longest_call<'a, I>(mut messages: I) -> Option<MinimalMessage>
+    where
+        I: Iterator<Item = &'a Message>,
+    {
+        let mut max_duration_message = messages.next();
+        let mut max_duration = 0;
+
+        for message in messages {
+            if let Some(dur) = message.duration_seconds {
+                if dur > max_duration {
+                    max_duration_message = Some(message);
+                    max_duration = dur;
+                }
+            }
+        }
+        max_duration_message.map(|m| m.clone().into())
     }
 }
 
