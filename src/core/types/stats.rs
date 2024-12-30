@@ -5,20 +5,21 @@ use serde::Serialize;
 #[derive(Serialize)]
 pub struct AllStats {
     pub chat_stats: ChatStats,
-    pub occurrences: OccurrencesStats,
-    pub longest_conversation: ConversationStats,
+    pub occurrences: MessagesStats,
+    pub longest_conversation: MessagesStats,
     pub calls_stats: CallsStats,
 }
 
 #[derive(Serialize)]
 pub struct ChatStats {
-    pub first_message: MinimalMessage,
     pub messages_stats: MessagesStats,
     pub additional_messages_stats: AdditionalMessagesStats,
 }
 
 #[derive(Serialize)]
 pub struct MessagesStats {
+    pub first_message: Option<MinimalMessage>,
+    pub last_message: Option<MinimalMessage>,
     pub total_messages_count: usize,
     pub owner_messages_count: usize,
     pub member_messages_count: usize,
@@ -29,21 +30,6 @@ pub struct AdditionalMessagesStats {
     pub total_characters_count: usize,
     pub owner_characters_count: usize,
     pub member_characters_count: usize,
-}
-
-#[derive(Serialize)]
-pub struct OccurrencesStats {
-    pub first_message: MinimalMessage,
-    pub total_messages_count: usize,
-    pub owner_messages_count: usize,
-    pub member_messages_count: usize,
-}
-
-#[derive(Serialize)]
-pub struct ConversationStats {
-    pub first_message: MinimalMessage,
-    pub last_message: MinimalMessage,
-    pub messages_stats: MessagesStats,
 }
 
 #[derive(Serialize)]
@@ -71,7 +57,7 @@ impl From<Message> for MinimalMessage {
             text: value.text,
             date: value.date,
             duration_seconds: value.duration_seconds,
-            discard_reason: value.discard_reason
+            discard_reason: value.discard_reason,
         }
     }
 }

@@ -7,24 +7,23 @@ type Result<T> = core::result::Result<T, DataPreparerError>;
 pub struct DataPreparer;
 
 impl DataPreparer {
-    pub fn first_message_ref<'a>(messages: &[&'a Message]) -> Result<&'a Message> {
-        match messages.iter().min_by(|x, y| x.date.cmp(&y.date)) {
-            None => Err(DataPreparerError::NoData),
-            Some(message) => Ok(message),
+    pub fn first_message<'a, I>(messages: I) -> Option<&'a Message>
+    where
+        I: Iterator<Item = &'a Message>,
+    {
+        match messages.min_by(|x, y| x.date.cmp(&y.date)) {
+            None => None,
+            Some(message) => Some(message),
         }
     }
 
-    pub fn last_message_ref<'a>(messages: &[&'a Message]) -> Result<&'a Message> {
-        match messages.iter().max_by(|x, y| x.date.cmp(&y.date)) {
-            None => Err(DataPreparerError::NoData),
-            Some(message) => Ok(message),
-        }
-    }
-
-    pub fn first_message(messages: &[Message]) -> Result<&Message> {
-        match messages.iter().min_by(|x, y| x.date.cmp(&y.date)) {
-            None => Err(DataPreparerError::NoData),
-            Some(message) => Ok(message),
+    pub fn last_message<'a, I>(messages: I) -> Option<&'a Message>
+    where
+        I: Iterator<Item = &'a Message>,
+    {
+        match messages.max_by(|x, y| x.date.cmp(&y.date)) {
+            None => None,
+            Some(message) => Some(message),
         }
     }
 
