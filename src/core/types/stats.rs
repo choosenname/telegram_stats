@@ -1,5 +1,5 @@
 use crate::core::types::chat::{Message, MessageText};
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, NaiveDate, Utc};
 use serde::Serialize;
 
 #[derive(Serialize)]
@@ -9,6 +9,7 @@ pub struct AllStats {
     pub longest_conversation: MessagesStats,
     pub calls_stats: CallsStats,
     pub most_used_sticker: MostUsedSticker,
+    pub streak: Streak,
 }
 
 #[derive(Serialize)]
@@ -59,6 +60,13 @@ pub struct MinimalMessage {
     pub discard_reason: Option<String>,
     pub file: Option<String>,
     pub media_type: Option<String>,
+}
+
+#[derive(Serialize)]
+pub struct Streak {
+    pub count: i32,
+    pub start: NaiveDate,
+    pub end: NaiveDate,
 }
 
 impl From<Message> for MinimalMessage {

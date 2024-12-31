@@ -1,6 +1,6 @@
 use crate::core::types::chat::{Chat, Message, MessageText, TextEntity};
-use crate::core::types::stats::MinimalMessage;
-use chrono::TimeDelta;
+use crate::core::types::stats::{MinimalMessage, Streak};
+use chrono::{Duration, TimeDelta, Utc};
 use regex::Regex;
 
 type Result<T> = core::result::Result<T, DataPreparerError>;
@@ -120,6 +120,64 @@ impl DataPreparer {
         }
 
         (max_used, max_message)
+    }
+
+    pub fn message_streak<'a, I>(mut messages: I) -> Streak
+    where
+        I: Iterator<Item = &'a Message>,
+    {
+        let mut max_streak = Streak {
+            count: 0,
+            start: Utc::now().date_naive(),
+            end: Utc::now().date_naive(),
+        };
+
+        let mut current_streak = Streak {
+            count: 0,
+            start: Utc::now().date_naive(),
+            end: Utc::now().date_naive(),
+        };
+
+        let mut previous_date = None;
+
+        for message in messages {
+            let message_date = message.date.date_naive();
+
+            match previous_date {
+                None => {
+                    // Инициализируем начальную дату
+                    current_streak.start = message_date;
+                    current_streak.end = message_date;
+                    current_streak.count = 1;
+                }
+                Some(prev) if message_date == prev + Duration::days(1) => {
+                    // Продолжаем последовательность
+                    current_streak.end = message_date;
+                    current_streak.count += 1;
+                }
+                Some(prev) if message_date > prev + Duration::days(1) => {
+                    // Последовательность прервалась
+                    if current_streak.count > max_streak.count {
+                        max_streak = current_streak;
+                    }
+                    current_streak = Streak {
+                        count: 1,
+                        start: message_date,
+                        end: message_date,
+                    };
+                }
+                _ => {}
+            }
+
+            previous_date = Some(message_date);
+        }
+
+        // Проверяем последнюю последовательность
+        if current_streak.count > max_streak.count {
+            max_streak = current_streak;
+        }
+
+        max_streak
     }
 }
 

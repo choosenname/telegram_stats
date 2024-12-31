@@ -127,6 +127,7 @@ impl StatisticRepository for AllStats {
             longest_conversation: MessagesStats::get_stats(data.longest_conversation()).await?,
             calls_stats: CallsStats::get_stats(data.calls()).await?,
             most_used_sticker: MostUsedSticker::get_stats(&data.messages).await?,
+            streak: DataPreparer::message_streak(data.messages.iter()),
         })
     }
 }
