@@ -40,7 +40,7 @@ impl StatisticRepository for MessagesStats {
                 .iter()
                 .filter(|message| match &message.from_id {
                     None => false,
-                    Some(id) => id == "user1150140845",
+                    Some(id) => id != "user5769929151",
                 })
                 .count(),
         })
@@ -66,7 +66,7 @@ impl StatisticRepository for AdditionalMessagesStats {
                 data.iter(),
                 |message| match &message.from_id {
                     None => false,
-                    Some(id) => id == "user1150140845",
+                    Some(id) => id != "user5769929151",
                 },
             )
             .map_err(StatisticError::FailedToGetData)?,
@@ -102,7 +102,7 @@ impl StatisticRepository for MostUsedSticker {
         let member =
             DataPreparer::most_used_sticker(data.iter(), |message| match &message.from_id {
                 None => false,
-                Some(id) => id == "user1150140845",
+                Some(id) => id != "user5769929151",
             });
 
         Ok(Self {
