@@ -2,6 +2,7 @@ use crate::config::Config;
 use crate::core::types::chat::Chat;
 use crate::core::types::stats::AllStats;
 use crate::data::implementation::json::Json;
+use crate::data::implementation::statistic_generators::ChatStatData;
 use crate::data::models::data_getter::DataGetter;
 use crate::services::data_processor::DataProcessor;
 use chrono::{TimeZone, Utc};
@@ -32,7 +33,10 @@ async fn main() {
     .await;
 
     data_processor
-        .gen_stats_and_save::<AllStats>(data)
+        .gen_stats_and_save::<AllStats>(ChatStatData {
+            chat: &data,
+            owner_id: &config.statistic_config.owner_id,
+        })
         .await
         .unwrap();
 }

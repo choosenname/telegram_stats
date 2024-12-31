@@ -9,38 +9,48 @@ use crate::data::repositories::statistic_repository::{
 use regex::Regex;
 
 impl StatisticRepository for ChatStats {
-    type Data<'b> = &'b Chat;
+    type Data<'b> = &'b ChatStatData<'b>;
 
-    async fn get_stats(data: Self::Data<'_>) -> Result<Self> {
+    async fn gen_stats(data: Self::Data<'_>) -> Result<Self> {
         Ok(ChatStats {
-            messages_stats: MessagesStats::get_stats(data.messages.iter().collect()).await?,
-            additional_messages_stats: AdditionalMessagesStats::get_stats(&data.messages).await?,
+            messages_stats: MessagesStats::gen_stats(MessageStatData {
+                messages: data.chat.messages.iter().collect(),
+                owner_id: data.owner_id,
+            })
+            .await?,
+            additional_messages_stats: AdditionalMessagesStats::gen_stats(MessageStatData {
+                messages: data.chat.messages.iter().collect(),
+                owner_id: data.owner_id,
+            })
+            .await?,
         })
     }
 }
 
 impl StatisticRepository for MessagesStats {
-    type Data<'b> = Vec<&'b Message>;
+    type Data<'a> = MessageStatData<'a>;
 
-    async fn get_stats(data: Self::Data<'_>) -> Result<Self> {
+    async fn gen_stats(data: Self::Data<'_>) -> Result<Self> {
         Ok(Self {
-            first_message: DataPreparer::first_message(data.iter().copied())
+            first_message: DataPreparer::first_message(data.messages.iter().copied())
                 .map(|message| message.clone().into()),
-            last_message: DataPreparer::last_message(data.iter().copied())
+            last_message: DataPreparer::last_message(data.messages.iter().copied())
                 .map(|message| message.clone().into()),
-            total_messages_count: data.len(),
+            total_messages_count: data.messages.len(),
             owner_messages_count: data
+                .messages
                 .iter()
                 .filter(|message| match &message.from_id {
                     None => false,
-                    Some(id) => id == "user5769929151",
+                    Some(id) => id == data.owner_id,
                 })
                 .count(),
             member_messages_count: data
+                .messages
                 .iter()
                 .filter(|message| match &message.from_id {
                     None => false,
-                    Some(id) => id == "user1150140845",
+                    Some(id) => id != data.owner_id,
                 })
                 .count(),
         })
@@ -48,14 +58,14 @@ impl StatisticRepository for MessagesStats {
 }
 
 impl StatisticRepository for AdditionalMessagesStats {
-    type Data<'b> = &'b Vec<Message>;
+    type Data<'b> = MessageStatData<'b>;
 
-    async fn get_stats(data: Self::Data<'_>) -> Result<Self> {
+    async fn gen_stats(data: Self::Data<'_>) -> Result<Self> {
         Ok(Self {
-            total_characters_count: DataPreparer::character_count(data.iter())
+            total_characters_count: DataPreparer::character_count(data.messages.iter().copied())
                 .map_err(StatisticError::FailedToGetData)?,
             owner_characters_count: DataPreparer::character_count_filtered(
-                data.iter(),
+                data.messages.iter().copied(),
                 |message| match &message.from_id {
                     None => false,
                     Some(id) => id == "user5769929151",
@@ -63,7 +73,7 @@ impl StatisticRepository for AdditionalMessagesStats {
             )
             .map_err(StatisticError::FailedToGetData)?,
             member_characters_count: DataPreparer::character_count_filtered(
-                data.iter(),
+                data.messages.iter().copied(),
                 |message| match &message.from_id {
                     None => false,
                     Some(id) => id == "user1150140845",
@@ -75,35 +85,41 @@ impl StatisticRepository for AdditionalMessagesStats {
 }
 
 impl StatisticRepository for CallsStats {
-    type Data<'a> = Vec<&'a Message>;
+    type Data<'a> = MessageStatData<'a>;
 
-    async fn get_stats(data: Self::Data<'_>) -> Result<Self> {
-        let duration = DataPreparer::calls_durations(data.iter().copied())
+    async fn gen_stats(data: Self::Data<'_>) -> Result<Self> {
+        let duration = DataPreparer::calls_durations(data.messages.iter().copied())
             .map_err(StatisticError::FailedToGetData)?;
 
         Ok(Self {
             total_calls_durations_sec: duration,
             total_calls_durations_min: duration / 60,
-            longest_call_durations_min: DataPreparer::longest_call(data.iter().copied()),
+            longest_call_durations_min: DataPreparer::longest_call(data.messages.iter().copied()),
         })
     }
 }
 
 impl StatisticRepository for MostUsedSticker {
-    type Data<'b> = &'b Vec<Message>;
+    type Data<'b> = MessageStatData<'b>;
 
-    async fn get_stats(data: Self::Data<'_>) -> Result<Self> {
+    async fn gen_stats(data: Self::Data<'_>) -> Result<Self> {
         let owner =
-            DataPreparer::most_used_sticker(data.iter(), |message| match &message.from_id {
-                None => false,
-                Some(id) => id == "user5769929151",
-            });
+            DataPreparer::most_used_sticker(
+                data.messages.iter().copied(),
+                |message| match &message.from_id {
+                    None => false,
+                    Some(id) => id == "user5769929151",
+                },
+            );
 
         let member =
-            DataPreparer::most_used_sticker(data.iter(), |message| match &message.from_id {
-                None => false,
-                Some(id) => id == "user1150140845",
-            });
+            DataPreparer::most_used_sticker(
+                data.messages.iter().copied(),
+                |message| match &message.from_id {
+                    None => false,
+                    Some(id) => id == "user1150140845",
+                },
+            );
 
         Ok(Self {
             owner_most_used_sticker_count: owner.0,
@@ -115,18 +131,44 @@ impl StatisticRepository for MostUsedSticker {
 }
 
 impl StatisticRepository for AllStats {
-    type Data<'b> = Chat;
+    type Data<'a> = ChatStatData<'a>;
 
-    async fn get_stats(data: Self::Data<'_>) -> Result<Self> {
+    async fn gen_stats(data: Self::Data<'_>) -> Result<Self> {
         Ok(Self {
-            chat_stats: ChatStats::get_stats(&data).await?,
-            occurrences: MessagesStats::get_stats(data.occurrences(
-                &Regex::new(r"(?i)\bлюблю\b.*\bтебя\b|\bтебя\b.*\bлюблю\b|\bи я тебя\b").unwrap(),
-            ))
+            chat_stats: ChatStats::gen_stats(&data).await?,
+            occurrences: MessagesStats::gen_stats(MessageStatData {
+                messages: data.chat.occurrences(
+                    &Regex::new(r"(?i)\bлюблю\b.*\bтебя\b|\bтебя\b.*\bлюблю\b|\bи я тебя\b")
+                        .unwrap(),
+                ),
+                owner_id: data.owner_id,
+            })
             .await?,
-            longest_conversation: MessagesStats::get_stats(data.longest_conversation()).await?,
-            calls_stats: CallsStats::get_stats(data.calls()).await?,
-            most_used_sticker: MostUsedSticker::get_stats(&data.messages).await?,
+            longest_conversation: MessagesStats::gen_stats(MessageStatData {
+                messages: data.chat.longest_conversation(),
+                owner_id: data.owner_id,
+            })
+            .await?,
+            calls_stats: CallsStats::gen_stats(MessageStatData {
+                messages: data.chat.calls(),
+                owner_id: data.owner_id,
+            })
+            .await?,
+            most_used_sticker: MostUsedSticker::gen_stats(MessageStatData {
+                messages: data.chat.messages.iter().collect(),
+                owner_id: data.owner_id,
+            })
+            .await?,
         })
     }
+}
+
+pub struct ChatStatData<'a> {
+    pub chat: &'a Chat,
+    pub owner_id: &'a str,
+}
+
+pub struct MessageStatData<'a> {
+    pub messages: Vec<&'a Message>,
+    pub owner_id: &'a str,
 }

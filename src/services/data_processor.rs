@@ -21,7 +21,7 @@ where
     where
         T: StatisticRepository + Serialize,
     {
-        let total_stats = T::get_stats(data).await?;
+        let total_stats = T::gen_stats(data).await?;
         self.data_repository.save(&total_stats).await?;
         Ok(())
     }
