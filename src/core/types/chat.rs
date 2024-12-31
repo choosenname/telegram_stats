@@ -134,7 +134,7 @@ pub struct Invoice {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Poll {
     pub question: String,
-    pub closed: String,
+    pub closed: bool,
     pub total_voters: i32,
     pub answers: Vec<PollAnswer>,
 }
@@ -143,7 +143,7 @@ pub struct Poll {
 pub struct PollAnswer {
     pub text: String,
     pub voters: i32,
-    pub chosen: String,
+    pub chosen: bool,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
