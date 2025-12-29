@@ -8,6 +8,7 @@ pub struct DataGetter;
 type Result<T> = core::result::Result<T, DataGetterError>;
 
 impl DataGetter {
+    #[allow(dead_code)]
     pub async fn process_file_from_str<T: DeserializeOwned>(
         file_path: &str,
     ) -> Result<T> {

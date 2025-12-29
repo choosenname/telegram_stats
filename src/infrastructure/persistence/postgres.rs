@@ -1,8 +1,9 @@
-use crate::core::types::chat::{Chat, Message};
-use crate::data::repositories::storage_repository::{StorageError, StorageRepository};
+use crate::domain::types::chat::{Chat, Message};
+use crate::infrastructure::repositories::storage_repository::{StorageError, StorageRepository};
 use sea_orm::ActiveValue::Set;
 use sea_orm::{DatabaseConnection, EntityTrait};
 
+#[allow(dead_code)]
 pub struct Postgres {
     pub pool: DatabaseConnection,
 }
@@ -11,8 +12,8 @@ impl StorageRepository for Postgres {
     type Data = Chat;
 
     async fn save(&self, data: Self::Data) -> Result<(), StorageError> {
-        use crate::core::entities::chats::ActiveModel as ChatModel;
-        use crate::core::entities::chats::Entity as Chats;
+        use crate::domain::entities::chats::ActiveModel as ChatModel;
+        use crate::domain::entities::chats::Entity as Chats;
 
         // Сохранение чата
         let chat_model = ChatModel {
@@ -23,7 +24,7 @@ impl StorageRepository for Postgres {
 
         Chats::insert(chat_model)
             .on_conflict(
-                sea_orm::sea_query::OnConflict::column(crate::core::entities::chats::Column::Id)
+                sea_orm::sea_query::OnConflict::column(crate::domain::entities::chats::Column::Id)
                     .do_nothing()
                     .to_owned(),
             )
@@ -39,9 +40,10 @@ impl StorageRepository for Postgres {
 }
 
 impl Postgres {
+    #[allow(dead_code)]
     pub async fn save_messages(&self, chat_id: i64, messages: &[Message]) -> Result<(), StorageError> {
-        use crate::core::entities::messages::ActiveModel as MessageModel;
-        use crate::core::entities::messages::Entity as Messages;
+        use crate::domain::entities::messages::ActiveModel as MessageModel;
+        use crate::domain::entities::messages::Entity as Messages;
 
         for message in messages {
             let message_model =     MessageModel::from((chat_id, message.clone()));
@@ -49,7 +51,7 @@ impl Postgres {
             Messages::insert(message_model)
                 .on_conflict(
                     sea_orm::sea_query::OnConflict::column(
-                        crate::core::entities::messages::Column::Id,
+                        crate::domain::entities::messages::Column::Id,
                     )
                     .do_nothing()
                     .to_owned(),

@@ -1,6 +1,7 @@
 use serde::Deserialize;
 
 pub struct Config {
+    #[allow(dead_code)]
     pub database_config: DatabaseConfig,
     pub app_config: AppConfig,
 }
@@ -16,6 +17,7 @@ impl Config {
 
 #[derive(Deserialize)]
 pub struct DatabaseConfig {
+    #[allow(dead_code)]
     pub url: String,
 }
 

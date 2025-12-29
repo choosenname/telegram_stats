@@ -1,5 +1,5 @@
-use crate::data::repositories::data_repository::DataRepository;
-use crate::data::repositories::statistic_repository::StatisticRepository;
+use crate::infrastructure::repositories::data_repository::DataRepository;
+use crate::infrastructure::repositories::statistic_repository::StatisticRepository;
 use serde::Serialize;
 
 pub struct DataProcessor<D>

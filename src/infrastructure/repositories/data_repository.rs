@@ -9,5 +9,6 @@ pub type Result<T> = std::result::Result<T, DataError>;
 #[derive(Debug, thiserror::Error)]
 pub enum DataError {
     #[error("save error")]
+    #[allow(dead_code)]
     Save,
 }

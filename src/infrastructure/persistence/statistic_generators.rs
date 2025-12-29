@@ -1,9 +1,9 @@
-use crate::core::types::chat::{Chat, Message};
-use crate::core::types::stats::{
+use crate::domain::types::chat::{Chat, Message};
+use crate::domain::types::stats::{
     AdditionalMessagesStats, AllStats, CallsStats, ChatStats, MessagesStats, MostUsedSticker,
 };
-use crate::data::models::data_preparer::DataPreparer;
-use crate::data::repositories::statistic_repository::{
+use crate::ingest::data_preparer::DataPreparer;
+use crate::infrastructure::repositories::statistic_repository::{
     Result, StatisticError, StatisticRepository,
 };
 use regex::Regex;

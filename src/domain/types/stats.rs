@@ -1,4 +1,4 @@
-use crate::core::types::chat::{Message, MessageText};
+use crate::domain::types::chat::{Message, MessageText};
 use chrono::{DateTime, NaiveDate, Utc};
 use serde::Serialize;
 

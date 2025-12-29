@@ -1,3 +1,4 @@
+#[allow(dead_code)]
 pub trait StorageRepository {
     type Data;
 
@@ -5,6 +6,7 @@ pub trait StorageRepository {
 }
 
 #[derive(Debug, thiserror::Error)]
+#[allow(dead_code)]
 pub enum StorageError {
     #[error("save error")]
     Save,

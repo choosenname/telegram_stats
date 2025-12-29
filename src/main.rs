@@ -1,15 +1,16 @@
+use crate::application::services::data_processor::DataProcessor;
 use crate::config::Config;
-use crate::core::types::chat::Chat;
-use crate::core::types::stats::AllStats;
-use crate::data::implementation::json::Json;
-use crate::data::models::data_getter::DataGetter;
-use crate::services::data_processor::DataProcessor;
+use crate::domain::types::chat::Chat;
+use crate::domain::types::stats::AllStats;
+use crate::infrastructure::persistence::json::Json;
+use crate::ingest::data_getter::DataGetter;
 use chrono::{TimeZone, Utc};
 
 mod config;
-mod core;
-mod data;
-mod services;
+mod application;
+mod domain;
+mod infrastructure;
+mod ingest;
 mod utils;
 
 #[tokio::main]

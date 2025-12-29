@@ -1,5 +1,5 @@
-use crate::core::entities::messages::ActiveModel;
-use crate::core::types::chat::Message;
+use crate::domain::entities::messages::ActiveModel;
+use crate::domain::types::chat::Message;
 use sea_orm::ActiveValue::Set;
 
 impl From<(i64, Message)> for ActiveModel {

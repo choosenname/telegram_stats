@@ -1,5 +1,5 @@
-use crate::core::types::chat::{Chat, Message, MessageText, TextEntity};
-use crate::core::types::stats::{MinimalMessage, Streak};
+use crate::domain::types::chat::{Chat, Message, MessageText, TextEntity};
+use crate::domain::types::stats::{MinimalMessage, Streak};
 use chrono::{Duration, TimeDelta, Utc};
 use regex::Regex;
 
@@ -79,7 +79,7 @@ impl DataPreparer {
         Ok(duration as u32)
     }
 
-    pub fn longest_call<'a, I>(mut messages: I) -> Option<MinimalMessage>
+    pub fn longest_call<'a, I>(messages: I) -> Option<MinimalMessage>
     where
         I: Iterator<Item = &'a Message>,
     {
@@ -122,7 +122,7 @@ impl DataPreparer {
         (max_used, max_message)
     }
 
-    pub fn message_streak<'a, I>(mut messages: I) -> Streak
+    pub fn message_streak<'a, I>(messages: I) -> Streak
     where
         I: Iterator<Item = &'a Message>,
     {
@@ -242,7 +242,9 @@ impl Chat {
 #[derive(Debug, thiserror::Error)]
 pub enum DataPreparerError {
     #[error("No data to prepare")]
+    #[allow(dead_code)]
     NoData,
     #[error("Invalid calls durations in message: {id}")]
+    #[allow(dead_code)]
     InvalidCallsArray { id: i64 },
 }

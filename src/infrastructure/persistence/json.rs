@@ -1,4 +1,4 @@
-use crate::data::repositories::data_repository::{DataRepository, Result};
+use crate::infrastructure::repositories::data_repository::{DataRepository, Result};
 use crate::utils::save_to_json::save_to_json;
 use serde::Serialize;
 
