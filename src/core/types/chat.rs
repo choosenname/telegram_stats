@@ -56,7 +56,7 @@ pub struct Message {
     pub period: Option<i32>,
     pub schedule_date: Option<i32>,
     pub emoticon: Option<String>,
-    pub cost: Option<i32>,
+    pub cost: Option<String>,
     pub months: Option<i32>,
     pub new_title: Option<String>,
     pub new_icon_emoji_id: Option<String>,

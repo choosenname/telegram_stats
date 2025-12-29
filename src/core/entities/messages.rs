@@ -77,7 +77,8 @@ pub struct Model {
     pub schedule_date: Option<i32>,
     #[sea_orm(column_type = "Text", nullable)]
     pub emoticon: Option<String>,
-    pub cost: Option<i32>,
+    #[sea_orm(column_type = "Text", nullable)]
+    pub cost: Option<String>,
     pub months: Option<i32>,
     #[sea_orm(column_type = "Text", nullable)]
     pub new_title: Option<String>,
