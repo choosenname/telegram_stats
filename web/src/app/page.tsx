@@ -233,6 +233,7 @@ export default async function Home() {
     longestCallMinutes: formatNumber(
       Math.round((calls.longest_call_durations_min?.duration_seconds ?? 0) / 60)
     ),
+    loveTotalCount: formatNumber(occurrences.total_messages_count),
     loveYouCount: formatNumber(occurrences.owner_messages_count),
     loveMeCount: formatNumber(occurrences.member_messages_count),
     firstMessageText: messageStats.first_message?.text ?? "С новым годом!",
@@ -240,7 +241,7 @@ export default async function Home() {
     longestChatText: conversation.first_message?.text ?? "как дела?",
     longestChatTime: formatTime(conversation.first_message?.date ?? null),
     avgMessagesPerDay: formatFloat(data.avg_messages_per_day),
-    topEmoji: emojiStats.top_emoji ?? "✨",
+    topEmoji: emojiStats.top_emoji ?? null,
     topEmojiCount: formatNumber(emojiStats.top_emoji_count),
     topWords: wordStats.top_words,
     topStickerCount: formatNumber(topStickerCount),
@@ -406,7 +407,7 @@ export default async function Home() {
 
           <StoryPanel className="justify-between panel-icy panel-card">
             <div className="absolute inset-x-0 top-0 h-14 garland opacity-90" />
-            <div className="absolute right-8 top-[128px] mb-2.5 text-4xl opacity-80">✨</div>
+            <div className="absolute right-8 top-[128px] mb-2.5 text-4xl opacity-80 animate-pulse">✨</div>
             <div className="relative z-10 space-y-5 pt-12 text-white">
               <Badge className="w-fit rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs uppercase tracking-[0.2em] text-white">
                 Самые частые
@@ -482,15 +483,13 @@ export default async function Home() {
                 Я люблю тебя
               </h2>
               <p className="max-w-[280px] text-base text-white/85">
-                {stats.loveYouCount} раз я говорил это в прошедшем году, а ты —{" "}
-                {stats.loveMeCount} раз.
+                Я упел признаться тебе в этом {stats.loveYouCount} раз, в прошедшем году.
               </p>
-              <div className="flex items-center gap-3 text-4xl">
+              <div className="flex items-center gap-3 text-4xl animate-float">
                 💞💗
               </div>
               <p className="max-w-[280px] text-base text-white/85">
-                Я бесконечно сильно тебя люблю. Спасибо, что была со мной весь
-                год.
+                И это все еще бесконечно мало от того как сильно я тебя люблю. Спасибо тебе, за еще один год моя люовь.
               </p>
             </div>
           </StoryPanel>

@@ -171,9 +171,7 @@
   }
 
   .frosted-title {
-    text-shadow:
-      0 3px 0 #dcd9d2,
-      0 6px 12px rgba(6, 18, 10, 0.45);
+    text-shadow: 0 10px 22px rgba(6, 18, 10, 0.35);
   }
 
   .glass-bubble {
