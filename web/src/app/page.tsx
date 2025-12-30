@@ -186,6 +186,7 @@ export default async function Home() {
   const stickers = data.most_used_sticker;
   const emojiStats = data.emoji_stats;
   const wordStats = data.word_stats;
+  const sourceDir = process.env.STATS_SOURCE_DIR ?? data.source_dir;
 
   const topStickerCount = Math.max(
     stickers.owner_most_used_sticker_count,
@@ -196,18 +197,20 @@ export default async function Home() {
       ? stickers.owner_most_used_sticker
       : stickers.member_most_used_sticker;
   const stickerMedia = await findStickerMedia(
-    data.source_dir,
+    sourceDir,
     topSticker?.file_name ?? topSticker?.file ?? null
   );
   const ownerStickerMedia = await findStickerMedia(
-    data.source_dir,
-    stickers.owner_most_used_sticker?.file ??
-    null
+    sourceDir,
+    stickers.owner_most_used_sticker?.file_name ??
+      stickers.owner_most_used_sticker?.file ??
+      null
   );
   const memberStickerMedia = await findStickerMedia(
-    data.source_dir,
-    stickers.member_most_used_sticker?.file ??
-    null
+    sourceDir,
+    stickers.member_most_used_sticker?.file_name ??
+      stickers.member_most_used_sticker?.file ??
+      null
   );
 
   const stats = {

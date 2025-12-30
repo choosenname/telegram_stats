@@ -1,0 +1,11 @@
+services:
+  web:
+    build:
+      context: ./web
+    ports:
+      - "3000:3000"
+    environment:
+      STATS_SOURCE_DIR: /data
+    volumes:
+      - ./output.json:/output.json:ro
+      - ./tg_export:/data:ro
