@@ -3,7 +3,7 @@ import { StoryPanel } from "@/components/story-panel";
 import { StickerPreview } from "@/components/sticker-preview";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { readFile } from "fs/promises";
+import { access, readFile } from "fs/promises";
 import path from "path";
 import { unstable_noStore as noStore } from "next/cache";
 
@@ -137,34 +137,43 @@ async function findStickerMedia(sourceDir: string, fileName: string | null) {
     return null;
   }
 
-  const directPath = fileName.includes("/")
-    ? path.join(sourceDir, fileName)
-    : null;
+  const publicRoot = path.resolve(process.cwd(), "public");
+  const normalized = fileName.replace(/\\/g, "/");
+  const candidates: string[] = [];
 
-  const candidates = [
-    directPath,
-    ...["stickers", "video_files", "files", "photos"].map((dir) =>
-      path.join(sourceDir, dir, fileName)
-    ),
-  ].filter(Boolean) as string[];
+  const addCandidate = (candidate: string) => {
+    const cleaned = candidate.replace(/^\/+/, "");
+    if (!cleaned || candidates.includes(cleaned)) return;
+    candidates.push(cleaned);
+  };
 
-  for (const filePath of candidates) {
+  if (sourceDir) {
+    const relFromSource = path
+      .relative(sourceDir, normalized)
+      .replace(/\\/g, "/");
+    if (relFromSource && !relFromSource.startsWith("..")) {
+      addCandidate(relFromSource);
+    }
+  }
+
+  if (normalized.includes("/")) {
+    addCandidate(normalized);
+  } else {
+    ["stickers", "video_files", "files", "photos"].forEach((dir) =>
+      addCandidate(path.join(dir, normalized))
+    );
+  }
+
+  for (const relPath of candidates) {
+    const filePath = path.join(publicRoot, relPath);
     try {
-      const file = await readFile(filePath);
+      await access(filePath);
       const ext = path.extname(filePath).toLowerCase();
       if (ext === ".tgs") {
         continue;
       }
-      const mime =
-        ext === ".webm"
-          ? "video/webm"
-          : ext === ".png"
-            ? "image/png"
-            : ext === ".jpg" || ext === ".jpeg"
-              ? "image/jpeg"
-              : "image/webp";
       return {
-        url: `data:${mime};base64,${file.toString("base64")}`,
+        url: `/${relPath.replace(/\\/g, "/")}`,
         isVideo: ext === ".webm",
       };
     } catch {
