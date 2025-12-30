@@ -233,6 +233,7 @@ export default async function Home() {
     longestCallMinutes: formatNumber(
       Math.round((calls.longest_call_durations_min?.duration_seconds ?? 0) / 60)
     ),
+    longestCallTime: formatTime(calls.longest_call_durations_min?.date ?? null),
     loveTotalCount: formatNumber(occurrences.total_messages_count),
     loveYouCount: formatNumber(occurrences.owner_messages_count),
     loveMeCount: formatNumber(occurrences.member_messages_count),
@@ -383,19 +384,46 @@ export default async function Home() {
                 В этом году мы не только писали, но и разговаривали по телефону
                 — {stats.callMinutes} минут за год.
               </p>
-              <Card className="tg-call w-full max-w-[260px] border-none px-4 py-3 !bg-[#e6f7cf] !text-emerald-950">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-600 text-white">
-                    📞
-                  </div>
-                  <div className="flex-1">
-                    <div className="text-xs uppercase text-emerald-700">
-                      Outgoing Call
+              <Card className="w-full max-w-[300px] rounded-[28px] border-0 bg-emerald-900/35 px-4 py-4 text-emerald-50 shadow-[0_18px_40px_rgba(8,22,12,0.35)]">
+                <div className="relative flex items-center justify-center rounded-2xl bg-transparent px-3 py-2 pr-16">
+                  <div className="text-center">
+                    <div className="text-[10px] uppercase tracking-[0.24em] text-emerald-100/80">
+                      Самый длинный
                     </div>
-                    <div className="text-sm font-semibold">03:29</div>
+                    <div className="text-sm font-semibold text-emerald-50">
+                      звонок
+                    </div>
                   </div>
-                  <div className="text-[10px] text-emerald-700">
-                    {stats.longestCallMinutes} мин
+                  <div className="absolute right-3 rounded-full bg-emerald-200/20 px-3 py-1 text-xs text-emerald-50">
+                    {stats.longestCallTime}
+                  </div>
+                </div>
+                <div className="flex flex-col items-center gap-3 rounded-2xl bg-transparent px-4 py-4 text-center">
+                  <div className="w-[156px] aspect-square">
+                    <img
+                      alt="Стикер звонка"
+                      className="w-full h-full object-contain animate-pulse"
+                      src="/sticker (321).webp"
+                    />
+                  </div>
+                  <div>
+                    <div className="text-[10px] uppercase tracking-[0.2em] text-emerald-100/80">
+                      Длительность
+                    </div>
+                    <div className="mt-1 text-lg font-semibold">
+                      {stats.longestCallMinutes} мин
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-4 flex items-center justify-between gap-3">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-rose-500 text-white shadow-[0_10px_20px_rgba(180,40,40,0.35)]">
+                    ✕
+                  </div>
+                  <div className="text-[10px] uppercase tracking-[0.28em] text-emerald-100/80">
+                    Входящий звонок
+                  </div>
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-600 text-white shadow-[0_10px_20px_rgba(30,120,70,0.35)]">
+                    ✓
                   </div>
                 </div>
               </Card>
