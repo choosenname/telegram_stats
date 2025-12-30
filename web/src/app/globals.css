@@ -99,8 +99,32 @@
     background:
       radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.08), transparent 35%),
       radial-gradient(circle at 90% 10%, rgba(255, 255, 255, 0.07), transparent 40%),
-      linear-gradient(180deg, #0f3b21 0%, #0c341d 55%, #0a2e18 100%);
+      linear-gradient(180deg, #114326 0%, #0c341d 55%, #0a2e18 100%);
     box-shadow: 0 40px 80px rgba(4, 18, 10, 0.55);
+  }
+
+  .panel-warm {
+    background:
+      radial-gradient(circle at 20% 15%, rgba(255, 210, 150, 0.18), transparent 40%),
+      linear-gradient(180deg, #1b5a2f 0%, #0c3a22 55%, #0a2e18 100%);
+  }
+
+  .panel-icy {
+    background:
+      radial-gradient(circle at 80% 10%, rgba(190, 240, 255, 0.2), transparent 45%),
+      linear-gradient(180deg, #0f4a35 0%, #0b3524 55%, #082316 100%);
+  }
+
+  .panel-rose {
+    background:
+      radial-gradient(circle at 30% 20%, rgba(255, 170, 170, 0.2), transparent 45%),
+      linear-gradient(180deg, #1b4c2e 0%, #0c3a22 60%, #092115 100%);
+  }
+
+  .panel-gold {
+    background:
+      radial-gradient(circle at 60% 20%, rgba(255, 220, 130, 0.2), transparent 45%),
+      linear-gradient(180deg, #175a33 0%, #0c3a22 60%, #0a2e18 100%);
   }
 
   .snowfall {
@@ -130,6 +154,48 @@
   .glass-bubble {
     background: linear-gradient(145deg, #f5f4f0, #fefdfb);
     box-shadow: 0 10px 25px rgba(10, 15, 10, 0.25);
+  }
+
+  .aurora-bg {
+    background:
+      radial-gradient(circle at 20% 10%, rgba(255, 220, 150, 0.35), transparent 45%),
+      radial-gradient(circle at 85% 20%, rgba(255, 110, 90, 0.28), transparent 45%),
+      radial-gradient(circle at 60% 80%, rgba(110, 220, 170, 0.3), transparent 40%),
+      linear-gradient(180deg, #0b2e19 0%, #0a2315 55%, #08190f 100%);
+  }
+
+  .glow-orb {
+    filter: blur(0.5px);
+    box-shadow: 0 0 60px rgba(255, 200, 120, 0.55);
+  }
+
+  .sparkle-field {
+    background-image:
+      radial-gradient(#ffffff 1px, transparent 1px),
+      radial-gradient(#ffd38f 1px, transparent 1px),
+      radial-gradient(#ffffff 1px, transparent 1px);
+    background-size: 22px 22px, 28px 28px, 36px 36px;
+    background-position: 0 0, 12px 18px, 5px 10px;
+    opacity: 0.5;
+    animation: drift 18s linear infinite;
+  }
+
+  .light-string {
+    background-image:
+      radial-gradient(circle at 8px 14px, #ffd891 0 6px, transparent 7px),
+      radial-gradient(circle at 36px 10px, #ff6a5f 0 6px, transparent 7px),
+      radial-gradient(circle at 64px 16px, #ffb347 0 6px, transparent 7px),
+      radial-gradient(circle at 92px 12px, #7ce0b2 0 6px, transparent 7px);
+    background-size: 110px 26px;
+    animation: twinkle 6s ease-in-out infinite;
+  }
+
+  .headline-shine {
+    background: linear-gradient(90deg, #ffe3a6 0%, #ffffff 50%, #ffd08a 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 12px 30px rgba(255, 210, 130, 0.3);
   }
 
   .tg-bubble {
@@ -201,6 +267,25 @@
   }
   50% {
     transform: translateY(-10px);
+  }
+}
+
+@keyframes drift {
+  from {
+    background-position: 0 0, 12px 18px, 5px 10px;
+  }
+  to {
+    background-position: 120px 80px, 200px 40px, 160px 120px;
+  }
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.2);
   }
 }
 

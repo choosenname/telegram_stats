@@ -1,5 +1,5 @@
 use crate::domain::types::chat::{Chat, Message, MessageText, TextEntity};
-use crate::domain::types::stats::{MinimalMessage, Streak};
+use crate::domain::types::stats::{MinimalMessage, Streak, WordCount};
 use chrono::{Duration, TimeDelta, Utc};
 use regex::Regex;
 
@@ -8,6 +8,205 @@ type Result<T> = core::result::Result<T, DataPreparerError>;
 pub struct DataPreparer;
 
 impl DataPreparer {
+    fn message_text_to_string(text: &MessageText) -> String {
+        match text {
+            MessageText::Plain(text) => text.clone(),
+            MessageText::Entities(entities) => {
+                let mut result = String::new();
+                for entity in entities {
+                    match entity {
+                        TextEntity::Text(text) => result.push_str(text),
+                        TextEntity::Entity(entity) => result.push_str(&entity.text),
+                    }
+                }
+                result
+            }
+        }
+    }
+
+    fn is_emoji_char(ch: char) -> bool {
+        matches!(
+            ch as u32,
+            0x1F1E6..=0x1F1FF
+                | 0x1F300..=0x1F5FF
+                | 0x1F600..=0x1F64F
+                | 0x1F680..=0x1F6FF
+                | 0x1F700..=0x1F77F
+                | 0x1F780..=0x1F7FF
+                | 0x1F800..=0x1F8FF
+                | 0x1F900..=0x1F9FF
+                | 0x1FA00..=0x1FAFF
+                | 0x2600..=0x26FF
+                | 0x2700..=0x27BF
+        )
+    }
+
+    fn extract_emojis(text: &str) -> Vec<String> {
+        let mut emojis = Vec::new();
+        let mut iter = text.chars().peekable();
+
+        while let Some(ch) = iter.next() {
+            if Self::is_emoji_char(ch) {
+                let mut emoji = ch.to_string();
+                if let Some('\u{FE0F}') = iter.peek() {
+                    emoji.push(iter.next().unwrap());
+                }
+                emojis.push(emoji);
+            }
+        }
+
+        emojis
+    }
+
+    pub fn top_emoji<'a, I>(messages: I) -> (Option<String>, i32)
+    where
+        I: Iterator<Item = &'a Message>,
+    {
+        let mut counts: std::collections::HashMap<String, i32> = std::collections::HashMap::new();
+
+        for message in messages {
+            let text = Self::message_text_to_string(&message.text);
+            for emoji in Self::extract_emojis(&text) {
+                *counts.entry(emoji).or_insert(0) += 1;
+            }
+        }
+
+        counts
+            .into_iter()
+            .max_by(|a, b| a.1.cmp(&b.1))
+            .map(|(emoji, count)| (Some(emoji), count))
+            .unwrap_or((None, 0))
+    }
+
+    pub fn top_words<'a, I>(messages: I, limit: usize) -> Vec<WordCount>
+    where
+        I: Iterator<Item = &'a Message>,
+    {
+        let word_re = Regex::new(r"[\p{L}\p{N}]+").unwrap();
+        let stop_words: std::collections::HashSet<&'static str> = [
+            "а",
+            "да",
+            "же",
+            "за",
+            "и",
+            "из",
+            "или",
+            "к",
+            "как",
+            "на",
+            "не",
+            "ну",
+            "о",
+            "по",
+            "про",
+            "с",
+            "со",
+            "то",
+            "у",
+            "я",
+            "мы",
+            "ты",
+            "вы",
+            "он",
+            "она",
+            "оно",
+            "они",
+            "мне",
+            "меня",
+            "мной",
+            "тебя",
+            "тебе",
+            "тобой",
+            "нас",
+            "нам",
+            "вас",
+            "вам",
+            "его",
+            "ее",
+            "их",
+            "мой",
+            "моя",
+            "мои",
+            "твой",
+            "твоя",
+            "твои",
+            "наш",
+            "наша",
+            "наши",
+            "ваш",
+            "ваша",
+            "ваши",
+            "это",
+            "эта",
+            "эти",
+            "этот",
+            "тот",
+            "та",
+            "те",
+            "там",
+            "тут",
+            "здесь",
+            "вот",
+            "ли",
+            "бы",
+            "быть",
+            "есть",
+            "были",
+            "был",
+            "была",
+            "будет",
+            "буду",
+            "будешь",
+            "будем",
+            "будете",
+            "еще",
+            "ещё",
+            "уже",
+            "если",
+            "чтобы",
+            "что",
+            "кто",
+            "когда",
+            "где",
+            "почему",
+            "потом",
+            "тогда",
+            "сейчас",
+            "сегодня",
+            "вчера",
+            "завтра",
+            "очень",
+            "просто",
+            "вообще",
+            "ладно",
+            "ага",
+            "в",
+            "тяк",
+            "так",
+        ]
+        .into_iter()
+        .collect();
+        let mut counts: std::collections::HashMap<String, i32> = std::collections::HashMap::new();
+
+        for message in messages {
+            let text = Self::message_text_to_string(&message.text);
+            for word in word_re.find_iter(&text) {
+                let value = word.as_str().to_lowercase();
+                if value.len() < 2 || stop_words.contains(value.as_str()) {
+                    continue;
+                }
+                *counts.entry(value).or_insert(0) += 1;
+            }
+        }
+
+        let mut items: Vec<WordCount> = counts
+            .into_iter()
+            .map(|(word, count)| WordCount { word, count })
+            .collect();
+        items.sort_by(|a, b| b.count.cmp(&a.count).then_with(|| a.word.cmp(&b.word)));
+        items.truncate(limit);
+        items
+    }
     pub fn first_message<'a, I>(messages: I) -> Option<&'a Message>
     where
         I: Iterator<Item = &'a Message>,
@@ -108,8 +307,13 @@ impl DataPreparer {
 
         for message in messages {
             if message.media_type == Some("sticker".to_string()) && filter(message) {
-                if let Some(path) = &message.file {
-                    let count = usage_counter.entry(path.clone()).or_insert(0);
+                let key = match &message.file {
+                    Some(path) if !path.starts_with("(File not included") => Some(path.clone()),
+                    _ => message.file_name.clone(),
+                };
+
+                if let Some(path) = key {
+                    let count = usage_counter.entry(path).or_insert(0);
                     *count += 1;
                     if *count > max_used {
                         max_used = *count;

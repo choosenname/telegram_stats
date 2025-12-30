@@ -34,8 +34,13 @@ async fn main() {
     )
     .await;
 
+    let source_dir = std::path::Path::new(&config.app_config.input_path)
+        .parent()
+        .and_then(|path| path.to_str())
+        .unwrap_or(&config.app_config.input_path);
+
     data_processor
-        .gen_stats_and_save::<AllStats>((&data, config.app_config.year))
+        .gen_stats_and_save::<AllStats>((&data, config.app_config.year, source_dir))
         .await
         .unwrap();
 }

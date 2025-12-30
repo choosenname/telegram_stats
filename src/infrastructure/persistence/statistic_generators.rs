@@ -1,11 +1,13 @@
 use crate::domain::types::chat::{Chat, Message};
 use crate::domain::types::stats::{
-    AdditionalMessagesStats, AllStats, CallsStats, ChatStats, MessagesStats, MostUsedSticker,
+    AdditionalMessagesStats, AllStats, CallsStats, ChatStats, EmojiStats, MessagesStats,
+    MostUsedSticker, WordStats,
 };
 use crate::ingest::data_preparer::DataPreparer;
 use crate::infrastructure::repositories::statistic_repository::{
     Result, StatisticError, StatisticRepository,
 };
+use chrono::NaiveDate;
 use regex::Regex;
 
 impl StatisticRepository for ChatStats {
@@ -115,13 +117,20 @@ impl StatisticRepository for MostUsedSticker {
 }
 
 impl StatisticRepository for AllStats {
-    type Data<'b> = (&'b Chat, i32);
+    type Data<'b> = (&'b Chat, i32, &'b str);
 
     async fn get_stats(data: Self::Data<'_>) -> Result<Self> {
-        let (chat, year) = data;
+        let (chat, year, source_dir) = data;
+        let days_in_year = NaiveDate::from_ymd_opt(year, 12, 31)
+            .and_then(|end| {
+                NaiveDate::from_ymd_opt(year, 1, 1)
+                    .map(|start| (end.signed_duration_since(start).num_days() + 1) as f64)
+            })
+            .unwrap_or(365.0);
 
         Ok(Self {
             year,
+            source_dir: source_dir.to_string(),
             chat_stats: ChatStats::get_stats(chat).await?,
             occurrences: MessagesStats::get_stats(chat.occurrences(
                 &Regex::new(r"(?i)\bлюблю\b.*\bтебя\b|\bтебя\b.*\bлюблю\b|\bи я тебя\b").unwrap(),
@@ -130,6 +139,17 @@ impl StatisticRepository for AllStats {
             longest_conversation: MessagesStats::get_stats(chat.longest_conversation()).await?,
             calls_stats: CallsStats::get_stats(chat.calls()).await?,
             most_used_sticker: MostUsedSticker::get_stats(&chat.messages).await?,
+            emoji_stats: {
+                let (emoji, count) = DataPreparer::top_emoji(chat.messages.iter());
+                EmojiStats {
+                    top_emoji: emoji,
+                    top_emoji_count: count,
+                }
+            },
+            word_stats: WordStats {
+                top_words: DataPreparer::top_words(chat.messages.iter(), 5),
+            },
+            avg_messages_per_day: chat.messages.len() as f64 / days_in_year,
             streak: DataPreparer::message_streak(chat.messages.iter()),
         })
     }

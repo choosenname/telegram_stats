@@ -5,11 +5,15 @@ use serde::Serialize;
 #[derive(Serialize)]
 pub struct AllStats {
     pub year: i32,
+    pub source_dir: String,
     pub chat_stats: ChatStats,
     pub occurrences: MessagesStats,
     pub longest_conversation: MessagesStats,
     pub calls_stats: CallsStats,
     pub most_used_sticker: MostUsedSticker,
+    pub emoji_stats: EmojiStats,
+    pub word_stats: WordStats,
+    pub avg_messages_per_day: f64,
     pub streak: Streak,
 }
 
@@ -51,6 +55,23 @@ pub struct MostUsedSticker {
 }
 
 #[derive(Serialize)]
+pub struct EmojiStats {
+    pub top_emoji: Option<String>,
+    pub top_emoji_count: i32,
+}
+
+#[derive(Serialize)]
+pub struct WordStats {
+    pub top_words: Vec<WordCount>,
+}
+
+#[derive(Serialize)]
+pub struct WordCount {
+    pub word: String,
+    pub count: i32,
+}
+
+#[derive(Serialize)]
 pub struct MinimalMessage {
     pub id: i64,
     pub from: Option<String>,
@@ -60,6 +81,7 @@ pub struct MinimalMessage {
     pub duration_seconds: Option<i32>,
     pub discard_reason: Option<String>,
     pub file: Option<String>,
+    pub file_name: Option<String>,
     pub media_type: Option<String>,
 }
 
@@ -81,6 +103,7 @@ impl From<Message> for MinimalMessage {
             duration_seconds: value.duration_seconds,
             discard_reason: value.discard_reason,
             file: value.file,
+            file_name: value.file_name,
             media_type: value.media_type,
         }
     }

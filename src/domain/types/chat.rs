@@ -32,6 +32,7 @@ pub struct Message {
     pub width: Option<i32>,
     pub height: Option<i32>,
     pub file: Option<String>,
+    pub file_name: Option<String>,
     pub thumbnail: Option<String>,
     pub self_destruct_period_seconds: Option<i32>,
     pub title: Option<String>,

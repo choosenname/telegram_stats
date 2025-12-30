@@ -15,6 +15,7 @@ type MessageSnapshot = {
   duration_seconds: number | null;
   discard_reason: string | null;
   file: string | null;
+  file_name: string | null;
   media_type: string | null;
 };
 
@@ -50,6 +51,7 @@ type OccurrenceStats = MessagesStats;
 
 type StatsData = {
   year: number;
+  source_dir: string;
   chat_stats: {
     messages_stats: MessagesStats;
     additional_messages_stats: AdditionalMessagesStats;
@@ -57,7 +59,23 @@ type StatsData = {
   occurrences: OccurrenceStats;
   longest_conversation: LongestConversationStats;
   calls_stats: CallsStats;
-  most_used_sticker: unknown;
+  most_used_sticker: {
+    owner_most_used_sticker_count: number;
+    owner_most_used_sticker: MessageSnapshot | null;
+    member_most_used_sticker_count: number;
+    member_most_used_sticker: MessageSnapshot | null;
+  };
+  emoji_stats: {
+    top_emoji: string | null;
+    top_emoji_count: number;
+  };
+  word_stats: {
+    top_words: {
+      word: string;
+      count: number;
+    }[];
+  };
+  avg_messages_per_day: number;
   streak: {
     count: number;
     start: string;
@@ -67,6 +85,10 @@ type StatsData = {
 
 function formatNumber(value: number) {
   return new Intl.NumberFormat("ru-RU").format(value);
+}
+
+function formatFloat(value: number) {
+  return new Intl.NumberFormat("ru-RU", { maximumFractionDigits: 1 }).format(value);
 }
 
 function formatTime(value: string | null) {
@@ -107,6 +129,42 @@ async function getStats(): Promise<StatsData> {
   return JSON.parse(raw) as StatsData;
 }
 
+async function findStickerMedia(sourceDir: string, fileName: string | null) {
+  if (!fileName) {
+    return null;
+  }
+
+  const candidates = ["stickers", "video_files", "files", "photos"].map((dir) =>
+    path.join(sourceDir, dir, fileName)
+  );
+
+  for (const filePath of candidates) {
+    try {
+      const file = await readFile(filePath);
+      const ext = path.extname(filePath).toLowerCase();
+      if (ext === ".tgs") {
+        continue;
+      }
+      const mime =
+        ext === ".webm"
+          ? "video/webm"
+          : ext === ".png"
+            ? "image/png"
+            : ext === ".jpg" || ext === ".jpeg"
+              ? "image/jpeg"
+              : "image/webp";
+      return {
+        url: `data:${mime};base64,${file.toString("base64")}`,
+        isVideo: ext === ".webm",
+      };
+    } catch {
+      // Try next folder.
+    }
+  }
+
+  return null;
+}
+
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
@@ -117,6 +175,22 @@ export default async function Home() {
   const occurrences = data.occurrences;
   const calls = data.calls_stats;
   const streak = data.streak;
+  const stickers = data.most_used_sticker;
+  const emojiStats = data.emoji_stats;
+  const wordStats = data.word_stats;
+
+  const topStickerCount = Math.max(
+    stickers.owner_most_used_sticker_count,
+    stickers.member_most_used_sticker_count
+  );
+  const topSticker =
+    stickers.owner_most_used_sticker_count >= stickers.member_most_used_sticker_count
+      ? stickers.owner_most_used_sticker
+      : stickers.member_most_used_sticker;
+  const stickerMedia = await findStickerMedia(
+    data.source_dir,
+    topSticker?.file ?? null
+  );
 
   const stats = {
     year:
@@ -144,25 +218,38 @@ export default async function Home() {
     firstMessageTime: formatTime(messageStats.first_message?.date ?? null),
     longestChatText: conversation.first_message?.text ?? "как дела?",
     longestChatTime: formatTime(conversation.first_message?.date ?? null),
+    avgMessagesPerDay: formatFloat(data.avg_messages_per_day),
+    topEmoji: emojiStats.top_emoji ?? "✨",
+    topEmojiCount: formatNumber(emojiStats.top_emoji_count),
+    topWords: wordStats.top_words,
+    topStickerCount: formatNumber(topStickerCount),
+    stickerMedia,
   };
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,_#1b5c34_0%,_#0a2e18_55%,_#071a10_100%)] text-foreground">
-      <main className="mx-auto flex max-w-6xl flex-col gap-10 px-6 pb-24 pt-12">
+    <div className="relative min-h-screen overflow-hidden text-foreground aurora-bg">
+      <div className="pointer-events-none absolute inset-0 sparkle-field" />
+      <div className="pointer-events-none absolute -left-24 top-10 h-72 w-72 rounded-full bg-amber-200/40 blur-3xl glow-orb animate-float" />
+      <div className="pointer-events-none absolute right-[-120px] top-32 h-96 w-96 rounded-full bg-rose-400/40 blur-[120px] glow-orb animate-float" />
+      <div className="pointer-events-none absolute bottom-[-120px] left-20 h-80 w-80 rounded-full bg-emerald-300/30 blur-[120px] glow-orb animate-float" />
+
+      <main className="relative mx-auto flex max-w-6xl flex-col gap-10 px-6 pb-24 pt-12">
         <header className="flex flex-col gap-3 text-center text-white/90">
           <Badge className="mx-auto w-fit rounded-full border border-white/20 bg-white/10 px-4 py-1 text-xs uppercase tracking-[0.3em] text-white">
             Telegram recap {stats.year}
           </Badge>
-          <h1 className="font-display text-3xl uppercase tracking-[0.12em] text-white drop-shadow-sm sm:text-4xl">
+          <h1 className="font-display text-3xl uppercase tracking-[0.12em] headline-shine sm:text-4xl">
             Новогоднии итоги года
           </h1>
         </header>
 
         <section className="grid gap-12 lg:grid-cols-2 lg:gap-14">
-          <StoryPanel>
+          <StoryPanel className="panel-gold">
             <div className="absolute left-0 right-0 top-0 h-14 garland opacity-90" />
+            <div className="absolute left-6 top-10 h-16 w-16 rounded-full bg-amber-300/70 blur-lg" />
             <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white/90 via-white/60 to-transparent" />
-            <div className="relative z-10 flex h-full flex-col gap-6 pt-8 text-white">
+            <div className="absolute right-8 top-40 mb-2.5 text-5xl opacity-80">🎄</div>
+            <div className="relative z-10 flex h-full flex-col gap-6 pt-12 text-white">
               <Badge className="w-fit rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs uppercase tracking-[0.25em] text-white">
                 {stats.year}
               </Badge>
@@ -177,9 +264,11 @@ export default async function Home() {
             </div>
           </StoryPanel>
 
-          <StoryPanel className="justify-between">
+          <StoryPanel className="justify-between panel-warm">
             <div className="absolute right-6 top-8 h-24 w-24 rounded-full bg-gradient-to-b from-amber-200 via-amber-400 to-amber-600 shadow-[0_18px_40px_rgba(60,30,10,0.45)] animate-float" />
-            <div className="relative z-10 flex flex-col gap-4 pt-10 text-white">
+            <div className="absolute left-0 right-0 top-6 h-12 light-string opacity-90" />
+            <div className="absolute left-6 bottom-10 text-4xl">🎁</div>
+            <div className="relative z-10 flex flex-col gap-4 pt-12 text-white">
               <p className="text-base text-white/85">
                 Самым первым сообщением в этом году было мое поздравление.
               </p>
@@ -196,9 +285,10 @@ export default async function Home() {
             </div>
           </StoryPanel>
 
-          <StoryPanel className="items-center text-center">
+          <StoryPanel className="items-center text-center panel-icy">
             <div className="absolute left-0 right-0 top-0 h-14 garland opacity-90" />
-            <div className="relative z-10 flex h-full flex-col items-center justify-center gap-4 pt-8 text-white">
+            <div className="absolute left-8 top-40 mb-2.5 text-5xl opacity-80">❄️</div>
+            <div className="relative z-10 flex h-full flex-col items-center justify-center gap-4 pt-12 text-white">
               <div className="text-7xl drop-shadow-[0_14px_30px_rgba(220,120,0,0.6)]">
                 🔥
               </div>
@@ -210,9 +300,10 @@ export default async function Home() {
             </div>
           </StoryPanel>
 
-          <StoryPanel>
+          <StoryPanel className="panel-rose">
             <div className="absolute inset-x-0 top-0 h-14 garland opacity-90" />
-            <div className="relative z-10 flex h-full flex-col justify-between pt-8 text-white">
+            <div className="absolute right-8 top-32 mb-2.5 text-4xl opacity-80">💬</div>
+            <div className="relative z-10 flex h-full flex-col justify-between pt-12 text-white">
               <div className="space-y-4">
                 <Badge className="w-fit rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs uppercase tracking-[0.2em] text-white">
                   Самый долгий чат
@@ -234,9 +325,10 @@ export default async function Home() {
             </div>
           </StoryPanel>
 
-          <StoryPanel className="justify-between">
+          <StoryPanel className="justify-between panel-gold">
             <div className="absolute inset-x-0 top-0 h-14 garland opacity-90" />
-            <div className="relative z-10 space-y-4 pt-8 text-white">
+            <div className="absolute left-8 top-32 mb-2.5 text-4xl opacity-80">📞</div>
+            <div className="relative z-10 space-y-4 pt-12 text-white">
               <p className="text-base text-white/85">
                 В этом году мы не только писали, но и разговаривали по телефону
                 — {stats.callMinutes} минут за год.
@@ -265,10 +357,85 @@ export default async function Home() {
             </div>
           </StoryPanel>
 
-          <StoryPanel className="items-center text-center">
+          <StoryPanel className="justify-between panel-icy">
+            <div className="absolute inset-x-0 top-0 h-14 garland opacity-90" />
+            <div className="absolute right-8 top-[128px] mb-2.5 text-4xl opacity-80">✨</div>
+            <div className="relative z-10 space-y-5 pt-12 text-white">
+              <Badge className="w-fit rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs uppercase tracking-[0.2em] text-white">
+                Самые частые
+              </Badge>
+              <div className="space-y-3">
+                <div className="text-sm uppercase text-white/70">Самый частый эмодзи</div>
+                <div className="flex items-end gap-3">
+                  <div className="text-5xl">{stats.topEmoji}</div>
+                  <div className="text-xl font-semibold">{stats.topEmojiCount} раз</div>
+                </div>
+              </div>
+              <div>
+                <div className="text-sm uppercase text-white/70">Самые частые слова</div>
+                <div className="mt-3 space-y-2">
+                  {stats.topWords.map((word) => (
+                    <div
+                      key={word.word}
+                      className="flex items-center justify-between rounded-full border border-white/20 bg-white/10 px-3 py-2 text-sm"
+                    >
+                      <span className="truncate">{word.word}</span>
+                      <span className="text-white/80">{formatNumber(word.count)}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="space-y-2">
+                <div className="text-sm uppercase text-white/70">Самый частый стикер</div>
+                {stats.stickerMedia ? (
+                  <div className="flex items-center gap-3">
+                    {stats.stickerMedia.isVideo ? (
+                      <video
+                        src={stats.stickerMedia.url}
+                        className="h-16 w-16 rounded-2xl bg-white/10 object-contain"
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                      />
+                    ) : (
+                      <img
+                        src={stats.stickerMedia.url}
+                        alt="Самый частый стикер"
+                        className="h-16 w-16 rounded-2xl bg-white/10 object-contain"
+                      />
+                    )}
+                    <div className="text-lg font-semibold">{stats.topStickerCount} раз</div>
+                  </div>
+                ) : (
+                  <div className="text-base text-white/70">
+                    Файл стикера не найден, но использовался {stats.topStickerCount} раз.
+                  </div>
+                )}
+              </div>
+            </div>
+          </StoryPanel>
+
+          <StoryPanel className="items-center text-center panel-rose">
+            <div className="absolute inset-x-0 top-0 h-14 garland opacity-90" />
+            <div className="absolute left-8 top-[128px] mb-2.5 text-4xl opacity-80">📌</div>
+            <div className="relative z-10 flex h-full flex-col items-center justify-center gap-6 pt-12 text-white">
+              <h2 className="font-display text-3xl uppercase tracking-[0.18em]">
+                Среднее в день
+              </h2>
+              <div className="text-5xl font-semibold">{stats.avgMessagesPerDay}</div>
+              <p className="max-w-[260px] text-base text-white/85">
+                сообщений в среднем за день
+              </p>
+            </div>
+          </StoryPanel>
+
+
+          <StoryPanel className="items-center text-center panel-warm">
             <div className="absolute inset-x-0 top-0 h-14 garland opacity-90" />
             <div className="absolute bottom-6 right-6 text-5xl animate-float">❤️</div>
-            <div className="relative z-10 flex h-full flex-col items-center justify-center gap-6 pt-10 text-white">
+            <div className="absolute left-8 bottom-10 text-4xl opacity-80">💖</div>
+            <div className="relative z-10 flex h-full flex-col items-center justify-center gap-6 pt-12 text-white">
               <h2 className="font-display text-3xl uppercase tracking-[0.18em]">
                 Я люблю тебя
               </h2>
