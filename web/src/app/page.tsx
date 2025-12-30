@@ -386,8 +386,8 @@ export default async function Home() {
                 В этом году мы не только писали, но и разговаривали по телефону
                 — {stats.callMinutes} минут за год.
               </p>
-              <Card className="w-full max-w-[300px] rounded-[28px] border-0 bg-emerald-900/35 px-4 py-4 text-emerald-50 shadow-[0_18px_40px_rgba(8,22,12,0.35)]">
-                <div className="relative flex items-center justify-center rounded-2xl bg-transparent px-3 py-2 pr-16">
+              <Card className="w-full gap-2 max-w-[300px] rounded-[28px] border-0 bg-emerald-900/35 px-4 py-4 text-emerald-50 shadow-[0_18px_40px_rgba(8,22,12,0.35)]">
+                <div className="relative flex items-center justify-center rounded-2xl bg-transparent px-3 pr-16">
                   <div className="text-center">
                     <div className="text-[10px] uppercase tracking-[0.24em] text-emerald-100/80">
                       Самый длинный
@@ -400,7 +400,7 @@ export default async function Home() {
                     {stats.longestCallTime}
                   </div>
                 </div>
-                <div className="flex flex-col items-center gap-3 rounded-2xl bg-transparent px-4 py-4 text-center">
+                <div className="flex flex-col items-center gap-2 rounded-2xl bg-transparent px-4 text-center">
                   <div className="w-[156px] aspect-square">
                     <img
                       alt="Стикер звонка"
@@ -417,12 +417,12 @@ export default async function Home() {
                     </div>
                   </div>
                 </div>
-                <div className="mt-4 flex items-center justify-between gap-3">
+                <div className="flex items-center justify-between gap-3">
                   <div className="flex h-12 w-12 items-center justify-center rounded-full bg-rose-500 text-white shadow-[0_10px_20px_rgba(180,40,40,0.35)]">
                     ✕
                   </div>
-                  <div className="text-[10px] uppercase tracking-[0.28em] text-emerald-100/80">
-                    Входящий звонок
+                  <div className="relative flex items-center justify-center text-[10px] uppercase tracking-[0.28em] text-emerald-100/80">
+                    <p className="text-center">Входящий звонок</p>
                   </div>
                   <div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-600 text-white shadow-[0_10px_20px_rgba(30,120,70,0.35)]">
                     ✓
