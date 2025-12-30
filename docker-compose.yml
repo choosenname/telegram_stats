@@ -6,14 +6,14 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: postgres
     ports:
-      - "5433:5432"
+      - "5434:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
   web:
     build:
       context: ./web
     ports:
-      - "3000:3000"
+      - "3001:3000"
     environment:
       STATS_SOURCE_DIR: /data
     volumes:
