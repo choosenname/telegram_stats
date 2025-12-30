@@ -1,7 +1,7 @@
+import { MessageBubble } from "@/components/message-bubble";
+import { StoryPanel } from "@/components/story-panel";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
-import type { ReactNode } from "react";
 import { readFile } from "fs/promises";
 import path from "path";
 import { unstable_noStore as noStore } from "next/cache";
@@ -154,12 +154,8 @@ export default async function Home() {
             Telegram recap {stats.year}
           </Badge>
           <h1 className="font-display text-3xl uppercase tracking-[0.12em] text-white drop-shadow-sm sm:text-4xl">
-            Новогодняя история переписки
+            Новогоднии итоги года
           </h1>
-          <p className="mx-auto max-w-2xl text-base text-white/70">
-            Шесть праздничных карточек, вдохновленных итогами года, как в
-            сторис Telegram.
-          </p>
         </header>
 
         <section className="grid gap-12 lg:grid-cols-2 lg:gap-14">
@@ -187,13 +183,7 @@ export default async function Home() {
               <p className="text-base text-white/85">
                 Самым первым сообщением в этом году было мое поздравление.
               </p>
-              <div className="tg-bubble w-fit max-w-[260px] bg-[#e6f7cf] px-4 py-2 text-sm text-emerald-950">
-                <div className="font-medium">{stats.firstMessageText}</div>
-                <div className="mt-1 flex items-center justify-end gap-1 text-[10px] text-emerald-700">
-                  <span>{stats.firstMessageTime}</span>
-                  <span className="tracking-[-0.08em]">✓✓</span>
-                </div>
-              </div>
+              <MessageBubble text={stats.firstMessageText} time={stats.firstMessageTime} />
               <p className="text-base text-white/85">
                 За год мы написали <span className="text-white">{stats.totalMessages}</span>{" "}
                 сообщений.
@@ -230,13 +220,7 @@ export default async function Home() {
                 <p className="text-base text-white/85">
                   Мы много общались, а самый длинный разговор был {stats.longestChatDate}.
                 </p>
-                <div className="tg-bubble w-fit max-w-[260px] bg-[#e6f7cf] px-4 py-2 text-sm text-emerald-950">
-                  <div className="font-medium">{stats.longestChatText}</div>
-                  <div className="mt-1 flex items-center justify-end gap-1 text-[10px] text-emerald-700">
-                    <span>{stats.longestChatTime}</span>
-                    <span className="tracking-[-0.08em]">✓✓</span>
-                  </div>
-                </div>
+                <MessageBubble text={stats.longestChatText} time={stats.longestChatTime} />
               </div>
               <div className="space-y-2">
                 <p className="text-base text-white/85">
@@ -304,26 +288,5 @@ export default async function Home() {
         </section>
       </main>
     </div>
-  );
-}
-
-function StoryPanel({
-  children,
-  className,
-}: {
-  children: ReactNode;
-  className?: string;
-}) {
-  return (
-    <Card
-      className={cn(
-        "relative flex min-h-[620px] w-full max-w-[420px] flex-col overflow-hidden border border-white/10 p-8 text-white festive-panel animate-fade-up",
-        className
-      )}
-    >
-      <div className="pointer-events-none absolute inset-0 snowfall" />
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/5 via-transparent to-black/30" />
-      {children}
-    </Card>
   );
 }

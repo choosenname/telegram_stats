@@ -134,8 +134,8 @@
 
   .tg-bubble {
     position: relative;
-    border-radius: 18px;
-    border-bottom-right-radius: 6px;
+    border-radius: 24px;
+    border-bottom-right-radius: 10px;
     background: #e6f7cf;
     color: #11351f;
     box-shadow: 0 10px 18px rgba(5, 20, 10, 0.22);
@@ -151,6 +151,20 @@
     height: 12px;
     background: #e6f7cf;
     clip-path: polygon(0 0, 100% 100%, 0 100%);
+  }
+
+  .tg-bubble.incoming {
+    border-bottom-right-radius: 24px;
+    border-bottom-left-radius: 10px;
+    background: #f1f4f6;
+    color: #0c1d12;
+  }
+
+  .tg-bubble.incoming::after {
+    right: auto;
+    left: -5px;
+    background: #f1f4f6;
+    clip-path: polygon(100% 0, 100% 100%, 0 100%);
   }
 
   .tg-call {
