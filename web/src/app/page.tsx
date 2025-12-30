@@ -351,14 +351,16 @@ export default async function Home() {
 
           <StoryPanel className="panel-rose panel-card">
             <div className="absolute inset-x-0 top-0 h-14 garland opacity-90" />
-            <div className="absolute right-8 top-32 mb-2.5 text-4xl opacity-80">💬</div>
             <div className="relative z-10 flex h-full flex-col justify-between pt-12 text-white">
               <div className="space-y-4">
                 <Badge className="w-fit rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs uppercase tracking-[0.2em] text-white">
                   Самый долгий чат
                 </Badge>
-                <p className="text-base text-white/85">
-                  Мы много общались, а самый длинный разговор был {stats.longestChatDate}.
+                <p className="flex items-center justify-between gap-3 text-base text-white/85">
+                  <span>
+                    Мы много общались, а самый длинный разговор был {stats.longestChatDate}.
+                  </span>
+                  <span className="text-3xl opacity-80">💬</span>
                 </p>
                 <MessageBubble text={stats.longestChatText} time={stats.longestChatTime} />
               </div>
