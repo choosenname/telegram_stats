@@ -27,13 +27,15 @@ async fn main() {
         .unwrap();
 
     data.retain_by_date(
-        Utc.with_ymd_and_hms(2024, 1, 1, 0, 0, 0).unwrap(),
-        Utc.with_ymd_and_hms(2024, 12, 31, 23, 59, 0).unwrap(),
+        Utc.with_ymd_and_hms(config.app_config.year, 1, 1, 0, 0, 0)
+            .unwrap(),
+        Utc.with_ymd_and_hms(config.app_config.year, 12, 31, 23, 59, 0)
+            .unwrap(),
     )
     .await;
 
     data_processor
-        .gen_stats_and_save::<AllStats>(data)
+        .gen_stats_and_save::<AllStats>((&data, config.app_config.year))
         .await
         .unwrap();
 }

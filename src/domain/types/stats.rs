@@ -4,6 +4,7 @@ use serde::Serialize;
 
 #[derive(Serialize)]
 pub struct AllStats {
+    pub year: i32,
     pub chat_stats: ChatStats,
     pub occurrences: MessagesStats,
     pub longest_conversation: MessagesStats,

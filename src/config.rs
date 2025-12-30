@@ -25,4 +25,5 @@ pub struct DatabaseConfig {
 pub struct AppConfig {
     pub input_path: String,
     pub output_path: String,
+    pub year: i32,
 }

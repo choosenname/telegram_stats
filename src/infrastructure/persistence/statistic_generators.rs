@@ -115,19 +115,22 @@ impl StatisticRepository for MostUsedSticker {
 }
 
 impl StatisticRepository for AllStats {
-    type Data<'b> = Chat;
+    type Data<'b> = (&'b Chat, i32);
 
     async fn get_stats(data: Self::Data<'_>) -> Result<Self> {
+        let (chat, year) = data;
+
         Ok(Self {
-            chat_stats: ChatStats::get_stats(&data).await?,
-            occurrences: MessagesStats::get_stats(data.occurrences(
+            year,
+            chat_stats: ChatStats::get_stats(chat).await?,
+            occurrences: MessagesStats::get_stats(chat.occurrences(
                 &Regex::new(r"(?i)\bлюблю\b.*\bтебя\b|\bтебя\b.*\bлюблю\b|\bи я тебя\b").unwrap(),
             ))
             .await?,
-            longest_conversation: MessagesStats::get_stats(data.longest_conversation()).await?,
-            calls_stats: CallsStats::get_stats(data.calls()).await?,
-            most_used_sticker: MostUsedSticker::get_stats(&data.messages).await?,
-            streak: DataPreparer::message_streak(data.messages.iter()),
+            longest_conversation: MessagesStats::get_stats(chat.longest_conversation()).await?,
+            calls_stats: CallsStats::get_stats(chat.calls()).await?,
+            most_used_sticker: MostUsedSticker::get_stats(&chat.messages).await?,
+            streak: DataPreparer::message_streak(chat.messages.iter()),
         })
     }
 }
