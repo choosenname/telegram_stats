@@ -316,7 +316,26 @@ export default async function Home() {
 
           <StoryPanel className="items-center text-center panel-icy panel-card">
             <div className="absolute left-0 right-0 top-0 h-14 garland opacity-90" />
-            <div className="absolute left-8 top-40 mb-2.5 text-5xl opacity-80">❄️</div>
+            <div className="pointer-events-none absolute inset-0 z-20 overflow-hidden">
+              <div className="snowflake-field">
+                <span className="snowflake">❄️</span>
+                <span className="snowflake">❄️</span>
+                <span className="snowflake">❄️</span>
+                <span className="snowflake">❄️</span>
+                <span className="snowflake">❄️</span>
+                <span className="snowflake">❄️</span>
+                <span className="snowflake">❄️</span>
+                <span className="snowflake">❄️</span>
+                <span className="snowflake">❄️</span>
+                <span className="snowflake">❄️</span>
+                <span className="snowflake">❄️</span>
+                <span className="snowflake">❄️</span>
+                <span className="snowflake">❄️</span>
+                <span className="snowflake">❄️</span>
+                <span className="snowflake">❄️</span>
+                <span className="snowflake">❄️</span>
+              </div>
+            </div>
             <div className="relative z-10 flex h-full flex-col items-center justify-center gap-4 pt-12 text-white">
               <div className="text-7xl drop-shadow-[0_14px_30px_rgba(220,120,0,0.6)]">
                 🔥
@@ -356,7 +375,6 @@ export default async function Home() {
 
           <StoryPanel className="justify-between panel-gold panel-card">
             <div className="absolute inset-x-0 top-0 h-14 garland opacity-90" />
-            <div className="absolute left-8 top-32 mb-2.5 text-4xl opacity-80">📞</div>
             <div className="relative z-10 space-y-4 pt-12 text-white">
               <p className="text-base text-white/85">
                 В этом году мы не только писали, но и разговаривали по телефону
@@ -419,7 +437,6 @@ export default async function Home() {
 
           <StoryPanel className="justify-between panel-rose panel-card">
             <div className="absolute inset-x-0 top-0 h-14 garland opacity-90" />
-            <div className="absolute left-8 top-[128px] mb-2.5 text-4xl opacity-80">🧩</div>
             <div className="relative z-10 space-y-6 pt-12 text-white">
               <Badge className="w-fit rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs uppercase tracking-[0.2em] text-white">
                 Стикеры года
@@ -445,7 +462,6 @@ export default async function Home() {
 
           <StoryPanel className="items-center text-center panel-rose panel-card">
             <div className="absolute inset-x-0 top-0 h-14 garland opacity-90" />
-            <div className="absolute left-8 top-[128px] mb-2.5 text-4xl opacity-80">📌</div>
             <div className="relative z-10 flex h-full flex-col items-center justify-center gap-6 pt-12 text-white">
               <h2 className="font-display text-3xl uppercase tracking-[0.18em]">
                 Среднее в день
@@ -461,7 +477,6 @@ export default async function Home() {
           <StoryPanel className="items-center text-center panel-warm panel-card">
             <div className="absolute inset-x-0 top-0 h-14 garland opacity-90" />
             <div className="absolute bottom-6 right-6 text-5xl animate-float">❤️</div>
-            <div className="absolute left-8 bottom-10 text-4xl opacity-80">💖</div>
             <div className="relative z-10 flex h-full flex-col items-center justify-center gap-6 pt-12 text-white">
               <h2 className="font-display text-3xl uppercase tracking-[0.18em]">
                 Я люблю тебя

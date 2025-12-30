@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Manrope, Yeseva_One } from "next/font/google";
 import "./globals.css";
+import "./snowflakes.css";
 
 const yeseva = Yeseva_One({
   variable: "--font-display",
