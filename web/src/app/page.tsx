@@ -1,5 +1,6 @@
 import { MessageBubble } from "@/components/message-bubble";
 import { StoryPanel } from "@/components/story-panel";
+import { StickerPreview } from "@/components/sticker-preview";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { readFile } from "fs/promises";
@@ -134,9 +135,16 @@ async function findStickerMedia(sourceDir: string, fileName: string | null) {
     return null;
   }
 
-  const candidates = ["stickers", "video_files", "files", "photos"].map((dir) =>
-    path.join(sourceDir, dir, fileName)
-  );
+  const directPath = fileName.includes("/")
+    ? path.join(sourceDir, fileName)
+    : null;
+
+  const candidates = [
+    directPath,
+    ...["stickers", "video_files", "files", "photos"].map((dir) =>
+      path.join(sourceDir, dir, fileName)
+    ),
+  ].filter(Boolean) as string[];
 
   for (const filePath of candidates) {
     try {
@@ -189,7 +197,17 @@ export default async function Home() {
       : stickers.member_most_used_sticker;
   const stickerMedia = await findStickerMedia(
     data.source_dir,
-    topSticker?.file ?? null
+    topSticker?.file_name ?? topSticker?.file ?? null
+  );
+  const ownerStickerMedia = await findStickerMedia(
+    data.source_dir,
+    stickers.owner_most_used_sticker?.file ??
+    null
+  );
+  const memberStickerMedia = await findStickerMedia(
+    data.source_dir,
+    stickers.member_most_used_sticker?.file ??
+    null
   );
 
   const stats = {
@@ -224,6 +242,10 @@ export default async function Home() {
     topWords: wordStats.top_words,
     topStickerCount: formatNumber(topStickerCount),
     stickerMedia,
+    ownerStickerCount: formatNumber(stickers.owner_most_used_sticker_count),
+    memberStickerCount: formatNumber(stickers.member_most_used_sticker_count),
+    ownerStickerMedia,
+    memberStickerMedia,
   };
 
   return (
@@ -385,33 +407,31 @@ export default async function Home() {
                   ))}
                 </div>
               </div>
-              <div className="space-y-2">
-                <div className="text-sm uppercase text-white/70">Самый частый стикер</div>
-                {stats.stickerMedia ? (
-                  <div className="flex items-center gap-3">
-                    {stats.stickerMedia.isVideo ? (
-                      <video
-                        src={stats.stickerMedia.url}
-                        className="h-16 w-16 rounded-2xl bg-white/10 object-contain"
-                        autoPlay
-                        loop
-                        muted
-                        playsInline
-                      />
-                    ) : (
-                      <img
-                        src={stats.stickerMedia.url}
-                        alt="Самый частый стикер"
-                        className="h-16 w-16 rounded-2xl bg-white/10 object-contain"
-                      />
-                    )}
-                    <div className="text-lg font-semibold">{stats.topStickerCount} раз</div>
+            </div>
+          </StoryPanel>
+
+          <StoryPanel className="justify-between panel-rose">
+            <div className="absolute inset-x-0 top-0 h-14 garland opacity-90" />
+            <div className="absolute left-8 top-[128px] mb-2.5 text-4xl opacity-80">🧩</div>
+            <div className="relative z-10 space-y-6 pt-12 text-white">
+              <Badge className="w-fit rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs uppercase tracking-[0.2em] text-white">
+                Стикеры года
+              </Badge>
+              <div className="space-y-4">
+                <div className="rounded-3xl border border-white/15 bg-white/10 px-4 py-4 text-center">
+                  <div className="text-xs uppercase text-white/70">Мой топ</div>
+                  <div className="text-lg font-semibold">{stats.ownerStickerCount} раз</div>
+                  <div className="mt-3 flex justify-center">
+                    <StickerPreview media={stats.ownerStickerMedia} />
                   </div>
-                ) : (
-                  <div className="text-base text-white/70">
-                    Файл стикера не найден, но использовался {stats.topStickerCount} раз.
+                </div>
+                <div className="rounded-3xl border border-white/15 bg-white/10 px-4 py-4 text-center">
+                  <div className="text-xs uppercase text-white/70">Твой топ</div>
+                  <div className="text-lg font-semibold">{stats.memberStickerCount} раз</div>
+                  <div className="mt-3 flex justify-center">
+                    <StickerPreview media={stats.memberStickerMedia} />
                   </div>
-                )}
+                </div>
               </div>
             </div>
           </StoryPanel>
