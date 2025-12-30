@@ -347,6 +347,7 @@ export default async function Home() {
                 За этот год наша серия ни разу не прервалась — мы не забывали
                 друг о друге ни на день.
               </p>
+              <p className="text-sm text-white/75">Маленькое чудо каждый день.</p>
             </div>
           </StoryPanel>
 
@@ -373,6 +374,7 @@ export default async function Home() {
                   {stats.longestChatMessages}
                 </p>
                 <p className="text-base text-white/85">сообщений подряд</p>
+                <p className="text-sm text-white/75">Этот день — в копилку теплых.</p>
               </div>
             </div>
           </StoryPanel>
@@ -486,6 +488,7 @@ export default async function Home() {
                   <div className="mt-3 flex justify-center">
                     <StickerPreview media={stats.memberStickerMedia} />
                   </div>
+                  <p className="text-xs text-white/50">(Злоба присутствует)</p>
                 </div>
               </div>
             </div>
@@ -502,6 +505,12 @@ export default async function Home() {
                 сообщений в среднем за день
               </p>
             </div>
+            <div className="text-left">
+              <p className="text-lg font-semibold text-white">
+                То что дарит улыбку каждый день
+              </p>
+            </div>
+
           </StoryPanel>
 
 
@@ -518,8 +527,8 @@ export default async function Home() {
               <div className="flex items-center gap-3 text-4xl animate-float">
                 💞💗
               </div>
-              <p className="max-w-[280px] text-base text-white/85">
-                И это все еще бесконечно мало от того как сильно я тебя люблю. Спасибо тебе, за еще один год моя люовь.
+              <p className="text-lg font-semibold text-white">
+                И всё это — бесконечно мало по сравнению с тем, как сильно я тебя люблю. Спасибо тебе за ещё один год, моя любовь.
               </p>
             </div>
           </StoryPanel>
