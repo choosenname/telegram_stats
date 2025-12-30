@@ -198,19 +198,17 @@ export default async function Home() {
       : stickers.member_most_used_sticker;
   const stickerMedia = await findStickerMedia(
     sourceDir,
-    topSticker?.file_name ?? topSticker?.file ?? null
+    topSticker?.file ?? null
   );
   const ownerStickerMedia = await findStickerMedia(
     sourceDir,
-    stickers.owner_most_used_sticker?.file_name ??
-      stickers.owner_most_used_sticker?.file ??
-      null
+    stickers.owner_most_used_sticker?.file ??
+    null
   );
   const memberStickerMedia = await findStickerMedia(
     sourceDir,
-    stickers.member_most_used_sticker?.file_name ??
-      stickers.member_most_used_sticker?.file ??
-      null
+    stickers.member_most_used_sticker?.file ??
+    null
   );
 
   const stats = {
