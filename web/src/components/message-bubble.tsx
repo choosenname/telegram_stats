@@ -24,7 +24,7 @@ export function MessageBubble({ text, time, incoming = false }: MessageBubblePro
       <div className="font-medium">{text}</div>
       <div className="mt-1 flex items-center justify-end gap-1 text-[10px] text-emerald-700 text-right">
         <span className="ml-auto">{time}</span>
-        {!incoming && <span className="tracking-[-0.08em]">✓✓</span>}
+        {!incoming && <span className="tracking-[-0.08em]">✓</span>}
       </div>
     </div>
   );

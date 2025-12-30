@@ -94,10 +94,10 @@ function formatFloat(value: number) {
 
 function formatTime(value: string | null) {
   if (!value) return "--:--";
-  return new Date(value).toLocaleTimeString("ru-RU", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  const isoTimeMatch = value.match(/T(\d{2}:\d{2})/);
+  if (isoTimeMatch) return isoTimeMatch[1];
+  const timeMatch = value.match(/(\d{2}:\d{2})/);
+  return timeMatch ? timeMatch[1] : value;
 }
 
 function formatDayMonth(value: string | null) {
@@ -112,15 +112,17 @@ function formatDuration(from: string | null, to: string | null) {
   if (!from || !to) return "";
   const diffMs = Math.max(0, new Date(to).getTime() - new Date(from).getTime());
   const totalMinutes = Math.round(diffMs / 60000);
-  const hours = Math.floor(totalMinutes / 60);
-  const minutes = totalMinutes % 60;
-  if (hours === 0) {
-    return `${minutes} минут`;
-  }
-  if (minutes === 0) {
-    return `${hours} часов`;
-  }
-  return `${hours} часов ${minutes} минут`;
+  return formatMinutesDuration(totalMinutes);
+}
+
+function formatMinutesDuration(totalMinutes: number) {
+  const safeMinutes = Math.max(0, Math.round(totalMinutes));
+  return `${formatNumber(safeMinutes)} минут`;
+}
+
+function estimateTypingMinutes(charCount: number) {
+  const charsPerMinute = 80;
+  return Math.ceil(charCount / charsPerMinute);
 }
 
 async function getStats(): Promise<StatsData> {
@@ -247,6 +249,9 @@ export default async function Home() {
     memberStickerCount: formatNumber(stickers.member_most_used_sticker_count),
     ownerStickerMedia,
     memberStickerMedia,
+    youTypingDuration: formatMinutesDuration(
+      estimateTypingMinutes(additionalStats.member_characters_count)
+    ),
   };
 
   return (
@@ -303,7 +308,7 @@ export default async function Home() {
               </p>
               <p className="text-base text-white/85">
                 <span className="text-white">{stats.youMessages}</span> из них написала ты — это{" "}
-                {stats.youChars} символов, что заняло бы 29 000 минут.
+                {stats.youChars} символов, что заняло бы {stats.youTypingDuration}.
               </p>
               <p className="text-lg font-semibold text-white">У тебя лапки не устали?</p>
             </div>
