@@ -302,7 +302,7 @@ export default async function Home() {
             Telegram recap {stats.year}
           </Badge>
           <h1 className="font-display text-3xl uppercase tracking-[0.12em] headline-shine sm:text-4xl">
-            Новогодние итоги года
+            Итоги нашего чата
           </h1>
         </header>
 
@@ -319,10 +319,10 @@ export default async function Home() {
               <h2 className="font-display text-4xl uppercase leading-tight tracking-[0.12em] text-white frosted-title sm:text-5xl">
                 С Новым Годом,
                 <br />
-                любимая!
+                друг!
               </h2>
               <p className="max-w-[260px] text-lg text-white/80">
-                Я подготовил небольшие итоги года о нас и нашей переписке.
+                Я собрал небольшие итоги года про наш чат.
               </p>
             </div>
           </StoryPanel>
@@ -341,10 +341,10 @@ export default async function Home() {
                 сообщений.
               </p>
               <p className="text-base text-white/85">
-                <span className="text-white">{stats.youMessages}</span> из них написала ты — это{" "}
+                <span className="text-white">{stats.youMessages}</span> из них написал ты — это{" "}
                 {stats.youChars} символов, что заняло бы {stats.youTypingDuration}.
               </p>
-              <p className="text-lg font-semibold text-white">У тебя лапки не устали?</p>
+              <p className="text-lg font-semibold text-white">Пальцы не устали?</p>
             </div>
           </StoryPanel>
 
@@ -375,11 +375,7 @@ export default async function Home() {
                 🔥
               </div>
               <div className="font-display text-6xl">{stats.streakDays}</div>
-              <p className="max-w-[260px] text-base text-white/85">
-                За этот год наша серия ни разу не прервалась — мы не забывали
-                друг о друге ни на день.
-              </p>
-              <p className="text-sm text-white/75">Маленькое чудо каждый день.</p>
+              <p className="text-sm text-white/75">Вот это стабильность!</p>
             </div>
           </StoryPanel>
 
@@ -406,66 +402,8 @@ export default async function Home() {
                   {stats.longestChatMessages}
                 </p>
                 <p className="text-base text-white/85">сообщений подряд</p>
-                <p className="text-sm text-white/75">Этот день — в копилку теплых.</p>
+                <p className="text-sm text-white/75">Тот самый эпичный день.</p>
               </div>
-            </div>
-          </StoryPanel>
-
-          <StoryPanel className="justify-between panel-gold panel-card">
-            <div className="absolute inset-x-0 top-0 h-14 garland opacity-90" />
-            <div className="relative z-10 space-y-4 pt-12 text-white">
-              <p className="text-base text-white/85">
-                В этом году мы не только писали, но и разговаривали по телефону
-                — {stats.callMinutes} минут за год.
-              </p>
-              <Card className="w-full gap-2 max-w-[300px] rounded-[28px] border-0 bg-emerald-900/35 px-4 py-4 text-emerald-50 shadow-[0_18px_40px_rgba(8,22,12,0.35)]">
-                <div className="relative flex items-center justify-center rounded-2xl bg-transparent px-3 pr-16">
-                  <div className="text-center">
-                    <div className="text-[10px] uppercase tracking-[0.24em] text-emerald-100/80">
-                      Самый длинный
-                    </div>
-                    <div className="text-sm font-semibold text-emerald-50">
-                      звонок
-                    </div>
-                  </div>
-                  <div className="absolute right-3 rounded-full bg-emerald-200/20 px-3 py-1 text-xs text-emerald-50">
-                    {stats.longestCallTime}
-                  </div>
-                </div>
-                <div className="flex flex-col items-center gap-2 rounded-2xl bg-transparent px-4 text-center">
-                  <div className="w-[156px] aspect-square">
-                    <img
-                      alt="Стикер звонка"
-                      className="w-full h-full object-contain animate-pulse"
-                      src="/sticker (321).webp"
-                    />
-                  </div>
-                  <div>
-                    <div className="text-[10px] uppercase tracking-[0.2em] text-emerald-100/80">
-                      Длительность
-                    </div>
-                    <div className="mt-1 text-lg font-semibold">
-                      {stats.longestCallMinutes} мин
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between gap-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-rose-500 text-white shadow-[0_10px_20px_rgba(180,40,40,0.35)]">
-                    ✕
-                  </div>
-                  <div className="relative flex items-center justify-center text-[10px] uppercase tracking-[0.28em] text-emerald-100/80">
-                    <p className="text-center">Входящий звонок</p>
-                  </div>
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-600 text-white shadow-[0_10px_20px_rgba(30,120,70,0.35)]">
-                    ✓
-                  </div>
-                </div>
-              </Card>
-            </div>
-            <div className="text-left">
-              <p className="text-lg font-semibold text-white">
-                Я очень люблю слышать твой голос
-              </p>
             </div>
           </StoryPanel>
 
@@ -497,6 +435,7 @@ export default async function Home() {
                   ))}
                 </div>
               </div>
+              <p className="text-sm text-white/75">Вот почему с тобой всегда весело.</p>
             </div>
           </StoryPanel>
 
@@ -520,9 +459,10 @@ export default async function Home() {
                   <div className="mt-3 flex justify-center">
                     <StickerPreview media={stats.memberStickerMedia} />
                   </div>
-                  <p className="text-xs text-white/50">(Злоба присутствует)</p>
+                  <p className="text-xs text-white/50">(Легендарная подборка)</p>
                 </div>
               </div>
+              <p className="text-sm text-white/75">Стикеры решают.</p>
             </div>
           </StoryPanel>
 
@@ -536,33 +476,14 @@ export default async function Home() {
               <p className="max-w-[260px] text-base text-white/85">
                 сообщений в среднем за день
               </p>
+              <p className="text-sm text-white/75">Держим темп!</p>
             </div>
             <div className="text-left">
               <p className="text-lg font-semibold text-white">
-                То что дарит улыбку каждый день
+                То, что стабильно радует
               </p>
             </div>
 
-          </StoryPanel>
-
-
-          <StoryPanel className="items-center text-center panel-warm panel-card">
-            <div className="absolute inset-x-0 top-0 h-14 garland opacity-90" />
-            <div className="absolute bottom-6 right-6 text-5xl animate-float">❤️</div>
-            <div className="relative z-10 flex h-full flex-col items-center justify-center gap-6 pt-12 text-white">
-              <h2 className="font-display text-3xl uppercase tracking-[0.18em]">
-                Я люблю тебя
-              </h2>
-              <p className="max-w-[280px] text-base text-white/85">
-                Я упел признаться тебе в этом {stats.loveYouCount} раз, в прошедшем году.
-              </p>
-              <div className="flex items-center gap-3 text-4xl animate-float">
-                💞💗
-              </div>
-              <p className="text-lg font-semibold text-white">
-                И всё это — бесконечно мало по сравнению с тем, как сильно я тебя люблю. Спасибо тебе за ещё один год, моя любовь.
-              </p>
-            </div>
           </StoryPanel>
         </section>
       </main>
