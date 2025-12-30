@@ -10,7 +10,7 @@ export function StoryPanel({ children, className }: StoryPanelProps) {
   return (
     <Card
       className={cn(
-        "relative flex min-h-[620px] w-full max-w-[420px] flex-col overflow-hidden border border-white/10 p-8 text-white festive-panel animate-fade-up",
+        "relative flex min-h-[620px] w-full max-w-[420px] flex-col overflow-hidden p-8 text-white festive-panel animate-fade-up",
         className
       )}
     >

@@ -186,7 +186,14 @@
       radial-gradient(circle at 20% 10%, rgba(255, 220, 150, 0.35), transparent 45%),
       radial-gradient(circle at 85% 20%, rgba(255, 110, 90, 0.28), transparent 45%),
       radial-gradient(circle at 60% 80%, rgba(110, 220, 170, 0.3), transparent 40%),
-      linear-gradient(180deg, #0b2e19 0%, #0a2315 55%, #08190f 100%);
+      linear-gradient(
+        180deg,
+        #0e3b23 0%,
+        #0b2f1d 30%,
+        #0a2518 60%,
+        #0e3b23 100%
+      );
+    background-attachment: fixed;
   }
 
   .glow-orb {
@@ -245,7 +252,7 @@
 
   .soft-vignette {
     background: radial-gradient(circle at top, rgba(255, 240, 210, 0.06), transparent 60%),
-      radial-gradient(circle at bottom, rgba(0, 0, 0, 0.35), transparent 60%);
+      radial-gradient(circle at bottom, rgba(0, 0, 0, 0.18), transparent 60%);
   }
 
   .light-string {
