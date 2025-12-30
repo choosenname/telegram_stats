@@ -3,6 +3,7 @@ import { StoryPanel } from "@/components/story-panel";
 import { StickerPreview } from "@/components/sticker-preview";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { Countdown } from "@/components/countdown";
 import { access, readFile } from "fs/promises";
 import path from "path";
 import { unstable_noStore as noStore } from "next/cache";
@@ -187,6 +188,28 @@ async function findStickerMedia(sourceDir: string, fileName: string | null) {
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
+  const unlockDate = new Date("2026-01-01T00:00:00+03:00");
+  if (new Date() < unlockDate) {
+    return (
+      <div className="relative min-h-screen overflow-hidden text-foreground aurora-bg">
+        <div className="pointer-events-none absolute inset-0 sparkle-field" />
+        <div className="pointer-events-none absolute inset-0 soft-vignette" />
+        <main className="relative mx-auto flex max-w-2xl flex-col items-center justify-center gap-6 px-6 pb-24 pt-24 text-center text-white">
+          <Badge className="mx-auto w-fit rounded-full border border-white/20 bg-white/10 px-4 py-1 text-xs uppercase tracking-[0.3em] text-white">
+            Telegram recap
+          </Badge>
+          <h1 className="font-display text-3xl uppercase tracking-[0.12em] headline-shine sm:text-4xl">
+            Скоро открытие
+          </h1>
+          <p className="max-w-[360px] text-base text-white/85">
+            Это сюрприз для тебя, уже совсем скоро.
+          </p>
+          <Countdown targetIso="2026-01-01T00:00:00+03:00" />
+        </main>
+      </div>
+    );
+  }
+
   const data = await getStats();
   const messageStats = data.chat_stats.messages_stats;
   const additionalStats = data.chat_stats.additional_messages_stats;
