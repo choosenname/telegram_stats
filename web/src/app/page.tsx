@@ -252,9 +252,10 @@ export default async function Home() {
   return (
     <div className="relative min-h-screen overflow-hidden text-foreground aurora-bg">
       <div className="pointer-events-none absolute inset-0 sparkle-field" />
-      <div className="pointer-events-none absolute -left-24 top-10 h-72 w-72 rounded-full bg-amber-200/40 blur-3xl glow-orb animate-float" />
-      <div className="pointer-events-none absolute right-[-120px] top-32 h-96 w-96 rounded-full bg-rose-400/40 blur-[120px] glow-orb animate-float" />
-      <div className="pointer-events-none absolute bottom-[-120px] left-20 h-80 w-80 rounded-full bg-emerald-300/30 blur-[120px] glow-orb animate-float" />
+      <div className="pointer-events-none absolute inset-0 soft-vignette" />
+      <div className="pointer-events-none absolute -left-24 top-10 h-72 w-72 rounded-full bg-amber-200/40 blur-3xl glow-orb animate-float float-slow" />
+      <div className="pointer-events-none absolute right-[-120px] top-32 h-96 w-96 rounded-full bg-rose-400/40 blur-[120px] glow-orb animate-float float-mid" />
+      <div className="pointer-events-none absolute bottom-[-120px] left-20 h-80 w-80 rounded-full bg-emerald-300/30 blur-[120px] glow-orb animate-float float-fast" />
 
       <main className="relative mx-auto flex max-w-6xl flex-col gap-10 px-6 pb-24 pt-12">
         <header className="flex flex-col gap-3 text-center text-white/90">
@@ -262,12 +263,12 @@ export default async function Home() {
             Telegram recap {stats.year}
           </Badge>
           <h1 className="font-display text-3xl uppercase tracking-[0.12em] headline-shine sm:text-4xl">
-            Новогоднии итоги года
+            Новогодние итоги года
           </h1>
         </header>
 
-        <section className="grid gap-12 lg:grid-cols-2 lg:gap-14">
-          <StoryPanel className="panel-gold">
+        <section className="story-grid grid gap-12 lg:grid-cols-2 lg:gap-14">
+          <StoryPanel className="panel-gold panel-card">
             <div className="absolute left-0 right-0 top-0 h-14 garland opacity-90" />
             <div className="absolute left-6 top-10 h-16 w-16 rounded-full bg-amber-300/70 blur-lg" />
             <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white/90 via-white/60 to-transparent" />
@@ -287,7 +288,7 @@ export default async function Home() {
             </div>
           </StoryPanel>
 
-          <StoryPanel className="justify-between panel-warm">
+          <StoryPanel className="justify-between panel-warm panel-card">
             <div className="absolute right-6 top-8 h-24 w-24 rounded-full bg-gradient-to-b from-amber-200 via-amber-400 to-amber-600 shadow-[0_18px_40px_rgba(60,30,10,0.45)] animate-float" />
             <div className="absolute left-0 right-0 top-6 h-12 light-string opacity-90" />
             <div className="absolute left-6 bottom-10 text-4xl">🎁</div>
@@ -308,7 +309,7 @@ export default async function Home() {
             </div>
           </StoryPanel>
 
-          <StoryPanel className="items-center text-center panel-icy">
+          <StoryPanel className="items-center text-center panel-icy panel-card">
             <div className="absolute left-0 right-0 top-0 h-14 garland opacity-90" />
             <div className="absolute left-8 top-40 mb-2.5 text-5xl opacity-80">❄️</div>
             <div className="relative z-10 flex h-full flex-col items-center justify-center gap-4 pt-12 text-white">
@@ -323,7 +324,7 @@ export default async function Home() {
             </div>
           </StoryPanel>
 
-          <StoryPanel className="panel-rose">
+          <StoryPanel className="panel-rose panel-card">
             <div className="absolute inset-x-0 top-0 h-14 garland opacity-90" />
             <div className="absolute right-8 top-32 mb-2.5 text-4xl opacity-80">💬</div>
             <div className="relative z-10 flex h-full flex-col justify-between pt-12 text-white">
@@ -348,7 +349,7 @@ export default async function Home() {
             </div>
           </StoryPanel>
 
-          <StoryPanel className="justify-between panel-gold">
+          <StoryPanel className="justify-between panel-gold panel-card">
             <div className="absolute inset-x-0 top-0 h-14 garland opacity-90" />
             <div className="absolute left-8 top-32 mb-2.5 text-4xl opacity-80">📞</div>
             <div className="relative z-10 space-y-4 pt-12 text-white">
@@ -380,7 +381,7 @@ export default async function Home() {
             </div>
           </StoryPanel>
 
-          <StoryPanel className="justify-between panel-icy">
+          <StoryPanel className="justify-between panel-icy panel-card">
             <div className="absolute inset-x-0 top-0 h-14 garland opacity-90" />
             <div className="absolute right-8 top-[128px] mb-2.5 text-4xl opacity-80">✨</div>
             <div className="relative z-10 space-y-5 pt-12 text-white">
@@ -411,7 +412,7 @@ export default async function Home() {
             </div>
           </StoryPanel>
 
-          <StoryPanel className="justify-between panel-rose">
+          <StoryPanel className="justify-between panel-rose panel-card">
             <div className="absolute inset-x-0 top-0 h-14 garland opacity-90" />
             <div className="absolute left-8 top-[128px] mb-2.5 text-4xl opacity-80">🧩</div>
             <div className="relative z-10 space-y-6 pt-12 text-white">
@@ -437,7 +438,7 @@ export default async function Home() {
             </div>
           </StoryPanel>
 
-          <StoryPanel className="items-center text-center panel-rose">
+          <StoryPanel className="items-center text-center panel-rose panel-card">
             <div className="absolute inset-x-0 top-0 h-14 garland opacity-90" />
             <div className="absolute left-8 top-[128px] mb-2.5 text-4xl opacity-80">📌</div>
             <div className="relative z-10 flex h-full flex-col items-center justify-center gap-6 pt-12 text-white">
@@ -452,7 +453,7 @@ export default async function Home() {
           </StoryPanel>
 
 
-          <StoryPanel className="items-center text-center panel-warm">
+          <StoryPanel className="items-center text-center panel-warm panel-card">
             <div className="absolute inset-x-0 top-0 h-14 garland opacity-90" />
             <div className="absolute bottom-6 right-6 text-5xl animate-float">❤️</div>
             <div className="absolute left-8 bottom-10 text-4xl opacity-80">💖</div>
